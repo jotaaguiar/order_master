@@ -1,34 +1,27 @@
-import 'package:flutter/foundation.dart';
+// provider.dart
+import 'package:flutter/material.dart';
 
-class PedidoProvider with ChangeNotifier {
-  List<String> _pedidos = []; // Lista de pedidos
+class PedidoProvider extends ChangeNotifier {
+  List<String> pedidos = [];
+  List<double> precos = []; // Adicione esta lista
 
-  // Getter para acessar os pedidos
-  List<String> get pedidos => _pedidos;
-
-  // Calcula o preço total dos pedidos
-  double calcularPrecoTotal() {
-    double precoTotal = 0.0;
-
-    for (String pedido in _pedidos) {
-      final RegExp regex = RegExp(r'Preço: \$([\d\.]+)');
-      final match = regex.firstMatch(pedido);
-
-      if (match != null) {
-        final precoTexto = match.group(1);
-        final preco = double.tryParse(precoTexto ?? '0.0'); // Use '0.0' se precoTexto for nulo
-        if (preco != null) {
-          precoTotal += preco;
-        }
-      }
-    }
-
-    return precoTotal;
+  void adicionarPedidos(List<String> pedidos) {
+    this.pedidos.addAll(pedidos);
+    notifyListeners();
   }
 
-  // Adicione pedidos à lista
-  void adicionarPedidos(List<String> pedidos) {
-    _pedidos.addAll(pedidos);
+  void removerPedido(int index) {
+    pedidos.removeAt(index);
     notifyListeners();
+  }
+
+
+  // Novo método para calcular o preço total diretamente
+  double calcularPrecoTotal() {
+    double total = 0.0;
+    for (var preco in precos) {
+      total += preco;
+    }
+    return total;
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'tela_mesa.dart'; // Importe a tela da mesa
+import 'tela_config.dart';
 
 class TelaInicial extends StatelessWidget {
   final String nomeGarcom = 'Odair';
@@ -17,7 +18,10 @@ class TelaInicial extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.settings),
             onPressed: () {
-              // Ação para abrir as configurações
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => TelaConfig()), // TelaConfig é a tela de configuração importada
+                );
             },
           ),
         ],
