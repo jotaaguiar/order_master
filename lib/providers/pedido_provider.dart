@@ -10,10 +10,16 @@ class PedidoProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void removerPedido(int index) {
+ void removerPedido(int index) {
+  if (index >= 0 && index < pedidos.length) {
+    // Remova o pedido e o preço correspondente
     pedidos.removeAt(index);
+    if (index < precos.length) {
+      precos.removeAt(index);
+    }
     notifyListeners();
   }
+}
 
 
   // Novo método para calcular o preço total diretamente
