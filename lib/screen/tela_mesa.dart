@@ -26,17 +26,20 @@ class TelaMesa extends StatelessWidget {
           children: [
             OpcaoMesaBotao(
               texto: 'Inserir Pedido',
-              telaDestino: TelaInserir(numeroMesa: numeroMesa), // Define a tela de destino
+              telaDestino: TelaInserir(
+                  numeroMesa: numeroMesa), // Define a tela de destino
             ),
             SizedBox(height: 16),
             OpcaoMesaBotao(
               texto: 'Alterar Pedido',
-              telaDestino: TelaAlterar(numeroMesa: numeroMesa), // Define a tela de destino
+              telaDestino: TelaAlterar(
+                  numeroMesa: numeroMesa), // Define a tela de destino
             ),
             SizedBox(height: 16),
             OpcaoMesaBotao(
               texto: 'Visualizar Conta',
-              telaDestino: TelaVisualizar(numeroMesa: numeroMesa), // Define a tela de destino
+              telaDestino: TelaVisualizar(
+                  numeroMesa: numeroMesa), // Define a tela de destino
             ),
             SizedBox(height: 16),
             OpcaoMesaBotao(

@@ -11,7 +11,10 @@ class TelaVisualizar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Visualizar Pedidos - $numeroMesa',style: TextStyle(color: Colors.white),),
+        title: Text(
+          'Visualizar Pedidos - $numeroMesa',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: Colors.blue,
         iconTheme: IconThemeData(color: Colors.white),
       ),
