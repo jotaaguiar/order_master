@@ -13,7 +13,7 @@ class TelaInserir extends StatefulWidget {
 
 class _TelaInserirState extends State<TelaInserir> {
   List<Map<String, dynamic>> opcoes = [
-    {'nome': 'Refrigerante Lata', 'preco': 5.0},
+    {'nome': 'Refrigerante Lata', 'preco': 15.0},
     {'nome': 'Porção de Arroz', 'preco': 15.0},
     {'nome': 'Salada', 'preco': 10.0},
     {'nome': 'Farofa', 'preco': 8.0},
@@ -83,8 +83,8 @@ class _TelaInserirState extends State<TelaInserir> {
       return "$nome - Preço: \$${preco!.toStringAsFixed(2)} - Observação: $observacao";
     }).toList();
 
-    // Adicione os pedidos à mesa correta
-    pedidoProvider.adicionarPedidos(widget.numeroMesa, pedidos);
+    // Adicione os pedidos ao PedidoProvider
+    pedidoProvider.adicionarPedidos(pedidos);
 
     // Limpe a lista de observações após a adição
     setState(() {

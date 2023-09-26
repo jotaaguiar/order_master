@@ -36,7 +36,7 @@ class TelaMesa extends StatelessWidget {
             SizedBox(height: 16),
             OpcaoMesaBotao(
               texto: 'Visualizar Conta',
-              telaDestino: TelaVisualizar(numeroMesa: numeroMesa), // Define a tela de destino
+              telaDestino: TelaVisualizar(), // Define a tela de destino
             ),
             SizedBox(height: 16),
             OpcaoMesaBotao(
