@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:order_master/providers/pedido_provider.dart';
 
 class TelaInserir extends StatefulWidget {
   final String numeroMesa;
@@ -10,19 +12,18 @@ class TelaInserir extends StatefulWidget {
 }
 
 class _TelaInserirState extends State<TelaInserir> {
-  List<String> opcoes = [
-    'Refrigerante Lata',
-    'Porção de Arroz',
-    'Salada',
-    'Farofa',
-    'Brahama Latão',
-    'Heineken 600ml',
-    'Budweiser long neck',
-    'Cerveja pra curar Traição',
-    // Adicione mais opções conforme necessário
+  List<Map<String, dynamic>> opcoes = [
+    {'nome': 'Refrigerante Lata', 'preco': 5.0},
+    {'nome': 'Porção de Arroz', 'preco': 15.0},
+    {'nome': 'Salada', 'preco': 10.0},
+    {'nome': 'Farofa', 'preco': 8.0},
+    {'nome': 'Brahma Latão', 'preco': 7.0},
+    {'nome': 'Heineken 600ml', 'preco': 12.0},
+    {'nome': 'Budweiser long neck', 'preco': 10.0},
+    {'nome': 'Cerveja pra curar Traição', 'preco': 20.0},
   ];
 
-  Map<String, String> observacoes = {}; // Mapeia as observações para cada opção
+  Map<String, String?> observacoes = {}; // Mapeia as observações para cada opção
 
   @override
   Widget build(BuildContext context) {
@@ -45,32 +46,69 @@ class _TelaInserirState extends State<TelaInserir> {
               padding: EdgeInsets.all(16.0),
               child: Column(
                 children: opcoes.map((opcao) {
+                  final nome = opcao['nome'];
+                  final preco = opcao['preco'];
                   return OpcaoBox(
-                    opcao: opcao,
-                    observacao: observacoes[opcao],
+                    nome: nome,
+                    preco: preco,
+                    observacao: observacoes[nome],
                     onChangedObservacao: (value) {
                       setState(() {
-                        observacoes[opcao] = value!;
+                        observacoes[nome] = value;
                       });
                     },
                   );
                 }).toList(),
               ),
             ),
+            ElevatedButton(
+              onPressed: () {
+                adicionarPedidos(context);
+              },
+              child: Text('Adicionar Pedidos'),
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  void adicionarPedidos(BuildContext context) {
+    final pedidoProvider = Provider.of<PedidoProvider>(context, listen: false);
+
+    final pedidos = opcoes.map((opcao) {
+      final nome = opcao['nome'];
+      final preco = opcao['preco'];
+      final observacao = observacoes[nome] ?? "";
+      return "$nome - Preço: \$${preco!.toStringAsFixed(2)} - Observação: $observacao";
+    }).toList();
+
+    // Adicione os pedidos ao PedidoProvider
+    pedidoProvider.adicionarPedidos(pedidos);
+
+    // Limpe a lista de observações após a adição
+    setState(() {
+      observacoes.clear();
+    });
+
+    // Exiba uma mensagem de sucesso
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Pedidos adicionados com sucesso!'),
       ),
     );
   }
 }
 
 class OpcaoBox extends StatelessWidget {
-  final String opcao;
+  final String? nome;
+  final double? preco;
   final String? observacao;
   final ValueChanged<String?>? onChangedObservacao;
 
   OpcaoBox({
-    required this.opcao,
+    required this.nome,
+    required this.preco,
     this.observacao,
     this.onChangedObservacao,
   });
@@ -86,8 +124,12 @@ class OpcaoBox extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              opcao,
+              nome!,
               style: TextStyle(fontSize: 16),
+            ),
+            Text(
+              'Preço: \$${preco!.toStringAsFixed(2)}',
+              style: TextStyle(fontSize: 14),
             ),
             SizedBox(height: 8),
             TextFormField(
@@ -115,7 +157,7 @@ class OpcaoBox extends StatelessWidget {
   void mostrarMensagemSucesso(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Adicionado com sucesso para $opcao'),
+        content: Text('Adicionado com sucesso: $nome'),
       ),
     );
   }
