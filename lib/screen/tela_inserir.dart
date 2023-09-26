@@ -83,8 +83,8 @@ class _TelaInserirState extends State<TelaInserir> {
       return "$nome - Preço: \$${preco!.toStringAsFixed(2)} - Observação: $observacao";
     }).toList();
 
-    // Adicione os pedidos ao PedidoProvider
-    pedidoProvider.adicionarPedidos(pedidos);
+    // Adicione os pedidos à mesa correta
+    pedidoProvider.adicionarPedidos(widget.numeroMesa, pedidos);
 
     // Limpe a lista de observações após a adição
     setState(() {

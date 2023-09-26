@@ -1,16 +1,20 @@
 import 'package:flutter/foundation.dart';
 
 class PedidoProvider with ChangeNotifier {
-  List<String> _pedidos = []; // Lista de pedidos
+  Map<String, List<String>> _pedidosPorMesa = {}; // Mapa de pedidos por mesa
 
-  // Getter para acessar os pedidos
-  List<String> get pedidos => _pedidos;
+  // Getter para acessar os pedidos de uma mesa
+  List<String> getPedidosPorMesa(String numeroMesa) {
+    return _pedidosPorMesa[numeroMesa] ?? [];
+  }
 
-  // Calcula o preço total dos pedidos
-  double calcularPrecoTotal() {
+  // Calcula o preço total dos pedidos de uma mesa
+  double calcularPrecoTotal(String numeroMesa) {
     double precoTotal = 0.0;
 
-    for (String pedido in _pedidos) {
+    final pedidos = _pedidosPorMesa[numeroMesa] ?? [];
+
+    for (String pedido in pedidos) {
       final RegExp regex = RegExp(r'Preço: \$([\d\.]+)');
       final match = regex.firstMatch(pedido);
 
@@ -26,9 +30,13 @@ class PedidoProvider with ChangeNotifier {
     return precoTotal;
   }
 
-  // Adicione pedidos à lista
-  void adicionarPedidos(List<String> pedidos) {
-    _pedidos.addAll(pedidos);
+  // Adicionar pedidos a uma mesa específica
+  void adicionarPedidos(String numeroMesa, List<String> pedidos) {
+    if (_pedidosPorMesa.containsKey(numeroMesa)) {
+      _pedidosPorMesa[numeroMesa]!.addAll(pedidos);
+    } else {
+      _pedidosPorMesa[numeroMesa] = List.from(pedidos);
+    }
     notifyListeners();
   }
 }

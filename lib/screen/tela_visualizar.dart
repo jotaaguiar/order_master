@@ -3,15 +3,19 @@ import 'package:provider/provider.dart';
 import 'package:order_master/providers/pedido_provider.dart';
 
 class TelaVisualizar extends StatelessWidget {
+  final String numeroMesa; // Adicione o número da mesa como um atributo
+
+  TelaVisualizar({required this.numeroMesa}); // Construtor
+
   @override
   Widget build(BuildContext context) {
     final pedidoProvider = Provider.of<PedidoProvider>(context);
-    final pedidos = pedidoProvider.pedidos;
-    final precoTotal = pedidoProvider.calcularPrecoTotal(); // Calcule o preço total
+    final pedidos = pedidoProvider.getPedidosPorMesa(numeroMesa); // Obtenha os pedidos com base no número da mesa
+    final precoTotal = pedidoProvider.calcularPrecoTotal(numeroMesa); // Calcule o preço total com base no número da mesa
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Visualizar Pedidos'),
+        title: Text('Visualizar Pedidos - Mesa $numeroMesa'),
       ),
       body: SingleChildScrollView(
         child: Column(
