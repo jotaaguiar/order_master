@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class PedidoProvider extends ChangeNotifier {
   List<String> pedidos = [];
-  List<double> precos = []; // Adicione esta lista
+  List<double> precos = []; 
 
   void adicionarPedidos(List<String> pedidos) {
     this.pedidos.addAll(pedidos);
@@ -20,8 +20,6 @@ class PedidoProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
-
-
   // Novo método para calcular o preço total diretamente
   double calcularPrecoTotal() {
     double total = 0.0;

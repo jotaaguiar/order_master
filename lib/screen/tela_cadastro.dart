@@ -47,7 +47,6 @@ class _CadastroScreenState extends State<CadastroScreen> {
                 final email = emailController.text;
                 final password = passwordController.text;
 
-                // Faça algo com os valores, como enviar para um servidor ou salvar localmente
                 print('Nome de Usuário: $username');
                 print('Email: $email');
                 print('Senha: $password');
