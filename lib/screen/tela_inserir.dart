@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
 import 'package:order_master/providers/pedido_provider.dart';
+import 'package:provider/provider.dart';
 
 class TelaInserir extends StatefulWidget {
   final String numeroMesa;
@@ -12,27 +14,41 @@ class TelaInserir extends StatefulWidget {
 }
 
 class _TelaInserirState extends State<TelaInserir> {
-  List<Map<String, dynamic>> opcoes = [
-    {'nome': 'Refrigerante Lata', 'preco': 15.0},
-    {'nome': 'Porção de Arroz', 'preco': 15.0},
-    {'nome': 'Salada', 'preco': 10.0},
-    {'nome': 'Farofa', 'preco': 8.0},
-    {'nome': 'Brahma Latão', 'preco': 7.0},
-    {'nome': 'Heineken 600ml', 'preco': 12.0},
-    {'nome': 'Budweiser long neck', 'preco': 10.0},
-    {'nome': 'Cerveja pra curar Traição', 'preco': 20.0},
-  ];
-
-  List<Map<String, dynamic>> itensSelecionados = [];
-
+  List<Map<String, dynamic>> opcoes = [];
   Map<String, String?> observacoes = {};
   Map<String, int> quantidades = {};
 
   @override
+  void initState() {
+    super.initState();
+    _carregarOpcoesDoCardapio();
+  }
+
+  Future<void> _carregarOpcoesDoCardapio() async {
+    final dbPath = await getDatabasesPath();
+    final database = await openDatabase(
+      join(dbPath, 'cardapio.db'),
+      version: 1,
+    );
+
+    final opcoesCarregadas = await database.query('itens');
+
+    setState(() {
+      opcoes = opcoesCarregadas;
+    });
+
+    await database.close();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final pedidoProvider = Provider.of<PedidoProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('${widget.numeroMesa} - Inserir Pedido'),
+        backgroundColor: Colors.grey[800],
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -51,7 +67,8 @@ class _TelaInserirState extends State<TelaInserir> {
                 children: opcoes.map((opcao) {
                   final nome = opcao['nome'];
                   final preco = opcao['preco'];
-                  final isSelected = itensSelecionados.contains(opcao);
+
+                  final isSelected = observacoes.containsKey(nome);
 
                   return OpcaoBox(
                     nome: nome,
@@ -72,9 +89,9 @@ class _TelaInserirState extends State<TelaInserir> {
                     onToggleSelection: () {
                       setState(() {
                         if (isSelected) {
-                          itensSelecionados.remove(opcao);
+                          observacoes.remove(nome);
                         } else {
-                          itensSelecionados.add(opcao);
+                          observacoes[nome] = '';
                         }
                       });
                     },
@@ -83,8 +100,12 @@ class _TelaInserirState extends State<TelaInserir> {
               ),
             ),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: Colors.grey[600], // Cor de fundo cinza
+                onPrimary: Colors.white, // Cor do texto branco
+              ),
               onPressed: () {
-                adicionarPedidos(context);
+                adicionarPedidos(context, pedidoProvider);
               },
               child: Text('Adicionar Pedidos'),
             ),
@@ -94,14 +115,12 @@ class _TelaInserirState extends State<TelaInserir> {
     );
   }
 
-  void adicionarPedidos(BuildContext context) {
-    final pedidoProvider = Provider.of<PedidoProvider>(context, listen: false);
-
+  void adicionarPedidos(BuildContext context, PedidoProvider pedidoProvider) {
     final List<Map<String, dynamic>> pedidosComQuantidade = [];
 
-    for (final opcao in itensSelecionados) {
-      final nome = opcao['nome'];
-      final preco = opcao['preco'];
+    for (final opcao in observacoes.keys) {
+      final nome = opcao;
+      final preco = opcoes.firstWhere((opcao) => opcao['nome'] == nome)['preco'];
       final observacao = observacoes[nome] ?? "";
       final quantidade = quantidades[nome] ?? 1;
 
@@ -130,7 +149,6 @@ class _TelaInserirState extends State<TelaInserir> {
     setState(() {
       observacoes.clear();
       quantidades.clear();
-      itensSelecionados.clear();
     });
 
     ScaffoldMessenger.of(context).showSnackBar(

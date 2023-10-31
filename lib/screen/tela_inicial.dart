@@ -3,7 +3,9 @@ import 'tela_mesa.dart'; // Importe a tela da mesa
 import 'tela_config.dart';
 
 class TelaInicial extends StatelessWidget {
-  final String nomeGarcom = 'Odair';
+  final String username;
+
+  TelaInicial({required this.username});
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +14,7 @@ class TelaInicial extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Tela Inicial',style: TextStyle(color: Colors.white),),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.grey[800],
         iconTheme: IconThemeData(color: Colors.white),
         actions: [
           IconButton(
@@ -34,14 +36,11 @@ class TelaInicial extends StatelessWidget {
           children: [
             Container(
               decoration: BoxDecoration(
-                color: Colors.blue,
-                borderRadius: BorderRadius.circular(10.0),
+                color: Colors.grey[600],
+                borderRadius: BorderRadius.circular(5.0),
               ),
               padding: EdgeInsets.all(8.0),
-              child: Text(
-                'Garçom: $nomeGarcom',
-                style: TextStyle(fontSize: 18, color: Colors.white),
-              ),
+              child: Text('Garçom: $username',style: TextStyle(fontSize: 18, color: Colors.white),),
             ),
             SizedBox(height: 20),
             Expanded(
@@ -61,7 +60,7 @@ class TelaInicial extends StatelessWidget {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.blue,
+                        primary: Colors.grey[600],
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50.0),
                         ),

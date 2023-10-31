@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'tela_cadastro.dart'; // Importe a tela de cadastro
-import 'tela_inicial.dart'; // Importe a tela de inicial
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
+import 'tela_cadastro.dart';
+import 'tela_inicial.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -12,6 +13,44 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   bool isAuthenticated = false;
+  Database? database;
+
+  Future<void> _initDatabase() async {
+    final dbPath = await getDatabasesPath();
+    database = await openDatabase(
+      join(dbPath, 'cadastro_bancodedados.db'),
+      version: 1,
+    );
+
+    // Adicione a seguinte verificação para garantir que o banco de dados não está fechado
+    if (database?.isOpen != true) {
+      database = await openDatabase(
+        join(dbPath, 'cadastro_bancodedados.db'),
+        version: 1,
+      );
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _initDatabase();
+  }
+
+  Future<bool> authenticateUser(String username, String password) async {
+    if (database == null) {
+      print("O banco de dados não foi inicializado corretamente.");
+      return false;
+    }
+
+    final List<Map<String, dynamic>> result = await database!.query(
+      'cadastro',
+      where: 'email = ? AND password = ?',
+      whereArgs: [username, password],
+    );
+
+    return result.isNotEmpty;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,11 +60,11 @@ class _LoginScreenState extends State<LoginScreen> {
           'Order Master',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.grey[800],
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: Container(
-        color: Colors.white, // Cor de fundo branca
+        color: Colors.white,
         child: Center(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -34,41 +73,56 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 TextFormField(
                   controller: usernameController,
-                  decoration: InputDecoration(labelText: 'Nome de usuário'),
+                  decoration: InputDecoration(
+                    labelText: 'E-mail',
+                    labelStyle: TextStyle(color: Colors.grey), // Define a cor cinza do rótulo
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey), // Define a borda cinza enquanto está focado
+                    ),
+                  ),
                 ),
                 SizedBox(height: 16.0),
                 TextFormField(
                   controller: passwordController,
+                  decoration: InputDecoration(
+                    labelText: 'Senha',
+                    labelStyle: TextStyle(color: Colors.grey), // Define a cor cinza do rótulo
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey), // Define a borda cinza enquanto está focado
+                    ),
+                  ),
                   obscureText: true,
-                  decoration: InputDecoration(labelText: 'Senha'),
                 ),
                 SizedBox(height: 16.0),
                 ElevatedButton(
-                  onPressed: () {
-                    // Verificar credenciais
+                  onPressed: () async {
                     final enteredUsername = usernameController.text;
                     final enteredPassword = passwordController.text;
 
-                    if (enteredUsername == 'jotaaguiar' &&
-                        enteredPassword == 'jotaaguiar09') {
+                    final isAuthenticated = await authenticateUser(
+                      enteredUsername,
+                      enteredPassword,
+                    );
+
+                    if (isAuthenticated) {
                       setState(() {
-                        isAuthenticated = true;
+                        this.isAuthenticated = true;
                       });
-                      // Navegar para a tela inicial após a autenticação
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => TelaInicial(), // Tela inicial
+                          builder: (context) =>
+                              TelaInicial(username: enteredUsername),
                         ),
                       );
                     } else {
-                      // Exibir mensagem de erro
                       showDialog(
                         context: context,
                         builder: (context) {
                           return AlertDialog(
                             title: Text('Erro de autenticação'),
-                            content: Text('Sabe a senha não meu nobre?'),
+                            content: Text(
+                                'Credenciais inválidas. Por favor, tente novamente.'),
                             actions: [
                               TextButton(
                                 onPressed: () {
@@ -84,11 +138,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(
-                        Colors.blue), // Cor de fundo azul para o botão
+                        Color.fromARGB(255, 61, 60, 60)),
                   ),
-                  child: Text('Entrar',
-                      style: TextStyle(
-                          color: Colors.white)), // Cor do texto branco
+                  child: Text('Entrar', style: TextStyle(color: Colors.white)),
                 ),
                 if (isAuthenticated)
                   Text(
@@ -106,11 +158,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) =>
-                                CadastroScreen(), // Tela de cadastro
+                            builder: (context) => CadastroScreen(),
                           ),
                         );
                       },
+                      style: TextButton.styleFrom(
+                        primary: Colors.grey[800], // Define a cor cinza
+                      ),
                       child: Text('Cadastrar'),
                     ),
                   ],

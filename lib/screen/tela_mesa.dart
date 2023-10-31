@@ -17,7 +17,7 @@ class TelaMesa extends StatelessWidget {
           '$numeroMesa',
           style: TextStyle(color: Colors.white), // Cor do texto em preto
         ),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.grey[800],
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: Center(
@@ -26,18 +26,21 @@ class TelaMesa extends StatelessWidget {
           children: [
             OpcaoMesaBotao(
               texto: 'Inserir Pedido',
+              corBotao: Colors.grey[600],
               telaDestino: TelaInserir(
                   numeroMesa: numeroMesa), // Define a tela de destino
             ),
             SizedBox(height: 16),
             OpcaoMesaBotao(
               texto: 'Alterar Pedido',
+              corBotao: Colors.grey[600],
               telaDestino: TelaAlterar(
                   numeroMesa: numeroMesa), // Define a tela de destino
             ),
             SizedBox(height: 16),
             OpcaoMesaBotao(
               texto: 'Visualizar Conta',
+              corBotao: Colors.grey[600],
               telaDestino: TelaVisualizar(
                   numeroMesa: numeroMesa), // Define a tela de destino
             ),
@@ -45,7 +48,7 @@ class TelaMesa extends StatelessWidget {
             OpcaoMesaBotao(
               texto: 'Fechar Conta',
               corBotao: Colors.red, // Cor diferente para "Fechar Conta"
-              //telaDestino: TelaConta(numeroMesa: numeroMesa), // Define a tela de destino
+              telaDestino: TelaConta(numeroMesa: numeroMesa), // Define a tela de destino
             ),
           ],
         ),

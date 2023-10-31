@@ -28,4 +28,10 @@ class PedidoProvider extends ChangeNotifier {
     }
     return total;
   }
+   void removerTodosPedidos() {
+    pedidos.clear();
+    precos.clear();
+    notifyListeners();
+  }
 }
+

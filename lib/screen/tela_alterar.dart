@@ -16,6 +16,8 @@ class TelaAlterar extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Alterar Pedidos - Mesa $numeroMesa'),
+        backgroundColor: Colors.grey[800],
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: ListView.builder(
         itemCount: pedidos.length,

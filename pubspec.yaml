@@ -1,5 +1,5 @@
 name: order_master
-description: Um programa de restaurante.
+description: Um programa de comanda de restaurante.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
@@ -13,6 +13,8 @@ dependencies:
 
   cupertino_icons: ^1.0.2
   shared_preferences: ^2.2.2
+  cpf_cnpj_validator: ^2.0.0
+  sqflite: ^2.3.0
 
 dev_dependencies:
   flutter_test:

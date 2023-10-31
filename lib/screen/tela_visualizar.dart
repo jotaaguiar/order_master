@@ -15,7 +15,7 @@ class TelaVisualizar extends StatelessWidget {
           'Visualizar Pedidos - $numeroMesa',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.grey[800],
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
@@ -23,9 +23,13 @@ class TelaVisualizar extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              color: Colors.blue,
               padding: EdgeInsets.all(16.0),
-              margin: EdgeInsets.all(16.0),
+              margin: EdgeInsets.all(5.0),
+              decoration: BoxDecoration(
+                color: Colors.grey[600],
+                borderRadius:
+                    BorderRadius.circular(10.0), // Border radius de 10
+              ),
               child: Text(
                 'Pedidos:',
                 style: TextStyle(
@@ -45,9 +49,14 @@ class TelaVisualizar extends StatelessWidget {
                     return Column(
                       children: pedidos.map((pedido) {
                         return Container(
-                          color: Colors.white,
+
                           margin: EdgeInsets.symmetric(vertical: 4.0),
                           padding: EdgeInsets.all(16.0),
+                          decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 194, 194, 194),
+                            borderRadius: BorderRadius.circular(
+                                10.0), // Border radius de 10
+                          ),
                           child: Text(
                             pedido,
                             style: TextStyle(
@@ -63,9 +72,13 @@ class TelaVisualizar extends StatelessWidget {
             ),
             SizedBox(height: 16),
             Container(
-              color: Colors.blue,
+              decoration: BoxDecoration(
+                color: Colors.grey[600],
+                borderRadius:
+                    BorderRadius.circular(10.0), // Border radius de 10
+              ),
               padding: EdgeInsets.all(16.0),
-              margin: EdgeInsets.all(16.0),
+              margin: EdgeInsets.all(5.0),
               child: Consumer<PedidoProvider>(
                 builder: (context, pedidoProvider, child) {
                   final precoTotal = pedidoProvider.calcularPrecoTotal();
