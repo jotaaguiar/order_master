@@ -97,213 +97,213 @@ class _TelaContaState extends State<TelaConta> {
         backgroundColor: Colors.grey[800],
         iconTheme: IconThemeData(color: Colors.white),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Total da Conta: R\$${totalDaConta.toStringAsFixed(2)}',
-              style: TextStyle(fontSize: 18),
-            ),
-            Divider(),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.grey[600],
-                borderRadius: BorderRadius.circular(5.0),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Total da Conta: R\$${totalDaConta.toStringAsFixed(2)}',
+                style: TextStyle(fontSize: 18),
               ),
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                'Pedidos:',
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.white,
+              Divider(),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[600],
+                  borderRadius: BorderRadius.circular(5.0),
+                ),
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  'Pedidos:',
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.white,
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Consumer<PedidoProvider>(
-                  builder: (context, pedidoProvider, child) {
-                    final pedidos = pedidoProvider.pedidos;
-                    return Column(
-                      children: pedidos.map((pedido) {
-                        return Container(
-                          color: Colors.white,
-                          margin: EdgeInsets.symmetric(vertical: 4.0),
-                          padding: EdgeInsets.all(16.0),
-                          child: Text(
-                            pedido,
-                            style: TextStyle(
-                              fontSize: 16,
+              SizedBox(height: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Consumer<PedidoProvider>(
+                    builder: (context, pedidoProvider, child) {
+                      final pedidos = pedidoProvider.pedidos;
+                      return Column(
+                        children: pedidos.map((pedido) {
+                          return Container(
+                            color: Colors.white,
+                            margin: EdgeInsets.symmetric(vertical: 4.0),
+                            padding: EdgeInsets.all(16.0),
+                            child: Text(
+                              pedido,
+                              style: TextStyle(
+                                fontSize: 16,
+                              ),
                             ),
-                          ),
-                        );
-                      }).toList(),
-                    );
-                  },
-                ),
-              ],
-            ),
-            Divider(),
-            Text(
-              'Número de Pessoas: $numeroDePessoas',
-              style: TextStyle(fontSize: 18),
-            ),
-            Row(
-              children: [
-                ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all(Colors.grey[600]),
-                  ),
-                  onPressed: adicionarPessoa,
-                  child: Text('Adicionar Pessoa'),
-                ),
-                SizedBox(width: 8),
-                ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all(Colors.grey[600]),
-                  ),
-                  onPressed: removerPessoa,
-                  child: Text('Remover Pessoa'),
-                ),
-              ],
-            ),
-            Divider(),
-            Text(
-              'Valor por Pessoa: R\$${valorPorPessoa.toStringAsFixed(2)}',
-              style: TextStyle(fontSize: 18),
-            ),
-            Text(
-              'Pessoas que já pagaram:',
-              style: TextStyle(fontSize: 18),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: pessoasPagaram.map((pessoa) {
-                double valorPago = valorPagoPorPessoa[pessoa] ?? 0.0;
-                return ListTile(
-                  title: Text(pessoa, style: TextStyle(fontSize: 16)),
-                  subtitle: Text(
-                    'Valor pago: R\$${valorPago.toStringAsFixed(2)}',
-                  ),
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete),
-                    onPressed: () {
-                      editarPessoaQuePagou(pessoa, valorPago);
+                          );
+                        }).toList(),
+                      );
                     },
                   ),
-                );
-              }).toList(),
-            ),
-            ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.grey[600]),
+                ],
               ),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    String nomePessoa = '';
-                    double valorPago = 0.0;
+              Divider(),
+              Text(
+                'Número de Pessoas: $numeroDePessoas',
+                style: TextStyle(fontSize: 18),
+              ),
+              Row(
+                children: [
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.grey[600]),
+                    ),
+                    onPressed: adicionarPessoa,
+                    child: Text('Adicionar Pessoa'),
+                  ),
+                  SizedBox(width: 8),
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.grey[600]),
+                    ),
+                    onPressed: removerPessoa,
+                    child: Text('Remover Pessoa'),
+                  ),
+                ],
+              ),
+              Divider(),
+              Text(
+                'Valor por Pessoa: R\$${valorPorPessoa.toStringAsFixed(2)}',
+                style: TextStyle(fontSize: 18),
+              ),
+              Text(
+                'Pessoas que já pagaram:',
+                style: TextStyle(fontSize: 18),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: pessoasPagaram.map((pessoa) {
+                  double valorPago = valorPagoPorPessoa[pessoa] ?? 0.0;
+                  return ListTile(
+                    title: Text(pessoa, style: TextStyle(fontSize: 16)),
+                    subtitle: Text(
+                      'Valor pago: R\$${valorPago.toStringAsFixed(2)}',
+                    ),
+                    trailing: IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () {
+                        editarPessoaQuePagou(pessoa, valorPago);
+                      },
+                    ),
+                  );
+                }).toList(),
+              ),
+              ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.grey[600]),
+                ),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      String nomePessoa = '';
+                      double valorPago = 0.0;
 
-                    return AlertDialog(
-                      title: Text('Adicionar Pessoa que Pagou'),
-                      content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          TextFormField(
-                            decoration: InputDecoration(
-                              labelText: 'Nome da Pessoa',
-                              labelStyle: TextStyle(color: Colors.grey),
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.grey),
+                      return AlertDialog(
+                        title: Text('Adicionar Pessoa que Pagou'),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            TextFormField(
+                              decoration: InputDecoration(
+                                labelText: 'Nome da Pessoa',
+                                labelStyle: TextStyle(color: Colors.grey),
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey),
+                                ),
                               ),
+                              onChanged: (value) {
+                                nomePessoa = value;
+                              },
                             ),
-                            onChanged: (value) {
-                              nomePessoa = value;
+                            TextFormField(
+                              decoration: InputDecoration(
+                                labelText: 'Valor Pago',
+                                labelStyle: TextStyle(color: Colors.grey),
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey),
+                                ),
+                              ),
+                              keyboardType: TextInputType.number,
+                              onChanged: (value) {
+                                valorPago = double.tryParse(value) ?? 0.0;
+                              },
+                            ),
+                          ],
+                        ),
+                        actions: <Widget>[
+                          TextButton(
+                            child: Text('Cancelar'),
+                            style: TextButton.styleFrom(
+                              primary: Colors.grey[600],
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
                             },
                           ),
-                          TextFormField(
-                            decoration: InputDecoration(
-                              labelText: 'Valor Pago',
-                              labelStyle: TextStyle(color: Colors.grey),
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.grey),
-                              ),
+                          TextButton(
+                            child: Text('Adicionar'),
+                            style: TextButton.styleFrom(
+                              primary: Colors.grey[600],
                             ),
-                            keyboardType: TextInputType.number,
-                            onChanged: (value) {
-                              valorPago = double.tryParse(value) ?? 0.0;
+                            onPressed: () {
+                              adicionarPessoaQuePagou(nomePessoa, valorPago);
+                              Navigator.of(context).pop();
                             },
                           ),
                         ],
-                      ),
-                      actions: <Widget>[
-                        TextButton(
-                          child: Text('Cancelar'),
-                          style: TextButton.styleFrom(
-                            primary: Colors.grey[600],
-                          ),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                        TextButton(
-                          child: Text('Adicionar'),
-                          style: TextButton.styleFrom(
-                            primary: Colors.grey[600],
-                          ),
-                          onPressed: () {
-                            adicionarPessoaQuePagou(nomePessoa, valorPago);
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-              child: Text('Adicionar Pessoa que Pagou'),
-            ),
-            Divider(),
-            ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.grey[600]),
+                      );
+                    },
+                  );
+                },
+                child: Text('Adicionar Pessoa que Pagou'),
               ),
-              onPressed: () {
-                // Remover todos os pedidos
-                removerTodosOsPedidos();
+              Divider(),
+              ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.grey[600]),
+                ),
+                onPressed: () {
+                  // Remover todos os pedidos
+                  removerTodosOsPedidos();
 
-                // Mostrar uma mensagem com um diálogo
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Text('Conta Encerrada'),
-                      content: Text('Obrigado por usar o OrderMaster.'),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            // Voltar para a tela inicial
-                            Navigator.of(context).pop();
-                            Navigator.of(context).pop();
-                            Navigator.of(context).pop(); 
-                          },
-                          child: Text('OK'),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-              child: Text('Encerrar conta'),
-            ),
-          ],
+                  // Mostrar uma mensagem com um diálogo
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text('Conta Encerrada'),
+                        content: Text('Obrigado por usar o OrderMaster.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              // Voltar para a tela inicial
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pop(); 
+                            },
+                            child: Text('OK'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                child: Text('Encerrar conta'),
+              ),
+            ],
+          ),
         ),
       ),
     );

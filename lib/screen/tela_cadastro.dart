@@ -27,13 +27,12 @@ class _CadastroScreenState extends State<CadastroScreen> {
     database = await openDatabase(dbPath, version: 1,
         onCreate: (Database db, int version) async {
       await db.execute(
-        'CREATE TABLE cadastro(id INTEGER PRIMARY KEY, username TEXT, email TEXT, password TEXT)',
+        'CREATE TABLE cadastro(idCad INTEGER PRIMARY KEY,username TEXT, email TEXT, password TEXT)',
       );
     });
   }
 
-  Future<void> saveCadastro(
-      String username, String email, String password) async {
+  Future<void> saveCadastro(String username, String email, String password) async {
     if (database == null) {
       print("O banco de dados não foi inicializado corretamente.");
       return;
@@ -42,26 +41,27 @@ class _CadastroScreenState extends State<CadastroScreen> {
     await database.insert(
       'cadastro',
       {
+        //'nome' : name,
         'username': username,
         'email': email,
         'password': password,
       },
     );
 
-    showSuccessDialog(context);
-
+    showSuccessDialog(context,username);
+    //print('Nome : $name')
     print('Nome de Usuário: $username');
     print('Email: $email');
     print('Senha: $password');
   }
 
-  void showSuccessDialog(BuildContext context) {
+  void showSuccessDialog(BuildContext context,String username) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: Text('Cadastro Realizado com Sucesso'),
-          content: Text('Seja Bem vindo ao Order Master Group'),
+          content: Text('Seja Bem vindo Sr(a) $username ao Order Master Group'),
           actions: [
             TextButton(
               onPressed: () {

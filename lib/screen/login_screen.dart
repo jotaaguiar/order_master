@@ -45,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     final List<Map<String, dynamic>> result = await database!.query(
       'cadastro',
-      where: 'email = ? AND password = ?',
+      where: 'username = ? AND password = ?',
       whereArgs: [username, password],
     );
 
@@ -74,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextFormField(
                   controller: usernameController,
                   decoration: InputDecoration(
-                    labelText: 'E-mail',
+                    labelText: 'Username',
                     labelStyle: TextStyle(color: Colors.grey), // Define a cor cinza do rótulo
                     focusedBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey), // Define a borda cinza enquanto está focado

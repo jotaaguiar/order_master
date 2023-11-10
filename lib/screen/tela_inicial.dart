@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'tela_mesa.dart'; // Importe a tela da mesa
 import 'tela_config.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
 
 class TelaInicial extends StatelessWidget {
   final String username;
 
   TelaInicial({required this.username});
+ 
 
   @override
   Widget build(BuildContext context) {
