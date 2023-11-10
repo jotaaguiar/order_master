@@ -1,6 +1,6 @@
  import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:order_master/screen/login_screen.dart';
+import 'package:order_master/screen/tela_first.dart';
 import 'providers/pedido_provider.dart'; // Importe a classe PedidoProvider
 
 
@@ -13,7 +13,7 @@ void main() {
         ),
       ],
       child: MaterialApp(
-        home: LoginScreen(),
+        home: TelaFirst(),
       ),
     ),
   );
