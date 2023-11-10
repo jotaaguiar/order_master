@@ -56,21 +56,22 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: Container(
         color: const Color(0xFFA2836E),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.only(top: 100.0),
-              child: Image.asset(
-                'images/LogoOrderMasterFinal.png',
-                width: 172,
-                height: 172,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(top: 120.0),
+                child: Image.asset(
+                  'images/LogoOrderMasterFinal.png',
+                  width: 172,
+                  height: 172,
+                ),
               ),
-            ),
-            Expanded(
-              child: Center(
+              SizedBox(height: 10.0),
+              Center(
                 child: Padding(
-                  padding: const EdgeInsets.all(40.0),
+                  padding: const EdgeInsets.all(55.0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -186,6 +187,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(
                               Color.fromARGB(255, 0, 0, 0)),
+                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                          ),
                           minimumSize: MaterialStateProperty.all<Size>(
                             Size(200, 50),
                           ),
@@ -206,7 +212,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                      SizedBox(height: 150.0),
+                      SizedBox(height: 160.0),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -234,8 +240,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

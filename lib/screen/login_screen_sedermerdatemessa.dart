@@ -56,30 +56,25 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: Container(
         color: const Color(0xFFA2836E),
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  'images/LogoOrderMasterFinal.png',
-                  width: 172,
-                  height: 172,
-                ),
-                SizedBox(height: 10.0),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10.0),
-                  child: Container(
-                    width: 340,
-                    height: 65,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF4F4137),
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(14.0),
-                      child: TextFormField(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(top: 100.0),
+              child: Image.asset(
+                'images/LogoOrderMasterFinal.png',
+                width: 172,
+                height: 172,
+              ),
+            ),
+            Expanded(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(40.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextFormField(
                         controller: usernameController,
                         decoration: InputDecoration(
                           labelText: 'Username',
@@ -90,30 +85,21 @@ class _LoginScreenState extends State<LoginScreen> {
                           focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.black),
                           ),
-                          contentPadding: EdgeInsets.only(bottom: 12),
+                          contentPadding: EdgeInsets.only(bottom: 8),
+                          prefixIcon: Icon(
+                            Icons.person,
+                            color: Colors.black,
+                          ),
                         ),
                         style: TextStyle(
                           fontSize: 16.0,
                         ),
                       ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10.0),
-                  child: Container(
-                    width: 340,
-                    height: 65,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF4F4137),
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(14.0),
-                      child: TextFormField(
+                      SizedBox(height: 20.0),
+                      TextFormField(
                         controller: passwordController,
                         decoration: InputDecoration(
-                          labelText: 'Senha',
+                          labelText: 'Password',
                           labelStyle: TextStyle(
                             color: Colors.black,
                             fontSize: 16.0,
@@ -121,133 +107,135 @@ class _LoginScreenState extends State<LoginScreen> {
                           focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.black),
                           ),
-                          contentPadding: EdgeInsets.only(bottom: 12),
+                          contentPadding: EdgeInsets.only(bottom: 8),
+                          prefixIcon: Icon(
+                            Icons.lock,
+                            color: Colors.black,
+                          ),
                         ),
                         style: TextStyle(
                           fontSize: 16.0,
                         ),
                         obscureText: true,
                       ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 10.0),
-                ElevatedButton(
-                  onPressed: () async {
-                    final enteredUsername = usernameController.text;
-                    final enteredPassword = passwordController.text;
+                      SizedBox(height: 50.0),
+                      ElevatedButton(
+                        onPressed: () async {
+                          final enteredUsername = usernameController.text;
+                          final enteredPassword = passwordController.text;
 
-                    // Verifica se ambos os campos estão preenchidos
-                    if (enteredUsername.isNotEmpty &&
-                        enteredPassword.isNotEmpty) {
-                      final isAuthenticated = await authenticateUser(
-                        enteredUsername,
-                        enteredPassword,
-                      );
+                          if (enteredUsername.isNotEmpty &&
+                              enteredPassword.isNotEmpty) {
+                            final isAuthenticated = await authenticateUser(
+                              enteredUsername,
+                              enteredPassword,
+                            );
 
-                      if (isAuthenticated) {
-                        setState(() {
-                          this.isAuthenticated = true;
-                        });
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                TelaInicial(username: enteredUsername),
-                          ),
-                        );
-                      } else {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: Text('Erro de autenticação'),
-                              content: Text(
-                                  'Credenciais inválidas. Por favor, tente novamente.'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Text('OK'),
+                            if (isAuthenticated) {
+                              setState(() {
+                                this.isAuthenticated = true;
+                              });
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      TelaInicial(username: enteredUsername),
                                 ),
-                              ],
+                              );
+                            } else {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: Text('Erro de autenticação'),
+                                    content: Text(
+                                        'Credenciais inválidas. Por favor, tente novamente.'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Text('OK'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: Text('Erro de autenticação'),
+                                  content: Text(
+                                      'Credenciais inválidas. Por favor, tente novamente.'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text('OK'),
+                                    ),
+                                  ],
+                                );
+                              },
                             );
-                          },
-                        );
-                      }
-                    } else {
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: Text('Erro de autenticação'),
-                              content: Text(
-                                  'Credenciais inválidas. Por favor, tente novamente.'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Text('OK'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                    }
-                  },
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        Color.fromARGB(255, 61, 60, 60)),
-                    minimumSize: MaterialStateProperty.all<Size>(
-                      Size(200, 50),
-                    ),
-                  ),
-                  child: Text(
-                    'Entrar',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18.0,
-                    ),
-                  ),
-                ),
-                if (isAuthenticated)
-                  Text(
-                    'Autenticado!',
-                    style: TextStyle(
-                      color: Colors.green,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                SizedBox(height: 16.0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => CadastroScreen(),
+                          }
+                        },
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Color.fromARGB(255, 0, 0, 0)),
+                          minimumSize: MaterialStateProperty.all<Size>(
+                            Size(200, 50),
                           ),
-                        );
-                      },
-                      style: TextButton.styleFrom(
-                        primary: Colors.grey[800],
-                      ),
-                      
-                      child: Text(
-                        'Ainda não possui cadastro? só clicar aqui então',
-                        style: TextStyle(
-                          fontSize: 16.0,
+                        ),
+                        child: Text(
+                          'LOGIN',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18.0,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                      if (isAuthenticated)
+                        Text(
+                          'Autenticado!',
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      SizedBox(height: 150.0),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => CadastroScreen(),
+                                ),
+                              );
+                            },
+                            style: TextButton.styleFrom(
+                              primary: const Color.fromARGB(255, 0, 0, 0),
+                            ),
+                            child: Text(
+                              'SIGN UP',
+                              style: TextStyle(
+                                fontSize: 14.0,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
