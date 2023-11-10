@@ -22,7 +22,6 @@ class _LoginScreenState extends State<LoginScreen> {
       version: 1,
     );
 
-    // Adicione a seguinte verificação para garantir que o banco de dados não está fechado
     if (database?.isOpen != true) {
       database = await openDatabase(
         join(dbPath, 'cadastro_bancodedados.db'),
@@ -55,123 +54,188 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Order Master',
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.grey[800],
-        iconTheme: IconThemeData(color: Colors.white),
-      ),
       body: Container(
-        color: Colors.white,
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextFormField(
-                  controller: usernameController,
-                  decoration: InputDecoration(
-                    labelText: 'Username',
-                    labelStyle: TextStyle(color: Colors.grey), // Define a cor cinza do rótulo
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey), // Define a borda cinza enquanto está focado
-                    ),
-                  ),
-                ),
-                SizedBox(height: 16.0),
-                TextFormField(
-                  controller: passwordController,
-                  decoration: InputDecoration(
-                    labelText: 'Senha',
-                    labelStyle: TextStyle(color: Colors.grey), // Define a cor cinza do rótulo
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey), // Define a borda cinza enquanto está focado
-                    ),
-                  ),
-                  obscureText: true,
-                ),
-                SizedBox(height: 16.0),
-                ElevatedButton(
-                  onPressed: () async {
-                    final enteredUsername = usernameController.text;
-                    final enteredPassword = passwordController.text;
-
-                    final isAuthenticated = await authenticateUser(
-                      enteredUsername,
-                      enteredPassword,
-                    );
-
-                    if (isAuthenticated) {
-                      setState(() {
-                        this.isAuthenticated = true;
-                      });
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              TelaInicial(username: enteredUsername),
-                        ),
-                      );
-                    } else {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: Text('Erro de autenticação'),
-                            content: Text(
-                                'Credenciais inválidas. Por favor, tente novamente.'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: Text('OK'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    }
-                  },
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        Color.fromARGB(255, 61, 60, 60)),
-                  ),
-                  child: Text('Entrar', style: TextStyle(color: Colors.white)),
-                ),
-                if (isAuthenticated)
-                  Text(
-                    'Autenticado!',
-                    style: TextStyle(
-                      color: Colors.green,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                SizedBox(height: 16.0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => CadastroScreen(),
-                          ),
-                        );
-                      },
-                      style: TextButton.styleFrom(
-                        primary: Colors.grey[800], // Define a cor cinza
-                      ),
-                      child: Text('Cadastrar'),
-                    ),
-                  ],
-                ),
-              ],
+        color: const Color(0xFFA2836E),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(top: 100.0),
+              child: Image.asset(
+                'images/LogoOrderMasterFinal.png',
+                width: 172,
+                height: 172,
+              ),
             ),
-          ),
+            Expanded(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(40.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextFormField(
+                        controller: usernameController,
+                        decoration: InputDecoration(
+                          labelText: 'Username',
+                          labelStyle: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16.0,
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black),
+                          ),
+                          contentPadding: EdgeInsets.only(bottom: 8),
+                          prefixIcon: Icon(
+                            Icons.person,
+                            color: Colors.black,
+                          ),
+                        ),
+                        style: TextStyle(
+                          fontSize: 16.0,
+                        ),
+                      ),
+                      SizedBox(height: 20.0),
+                      TextFormField(
+                        controller: passwordController,
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          labelStyle: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16.0,
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black),
+                          ),
+                          contentPadding: EdgeInsets.only(bottom: 8),
+                          prefixIcon: Icon(
+                            Icons.lock,
+                            color: Colors.black,
+                          ),
+                        ),
+                        style: TextStyle(
+                          fontSize: 16.0,
+                        ),
+                        obscureText: true,
+                      ),
+                      SizedBox(height: 50.0),
+                      ElevatedButton(
+                        onPressed: () async {
+                          final enteredUsername = usernameController.text;
+                          final enteredPassword = passwordController.text;
+
+                          if (enteredUsername.isNotEmpty &&
+                              enteredPassword.isNotEmpty) {
+                            final isAuthenticated = await authenticateUser(
+                              enteredUsername,
+                              enteredPassword,
+                            );
+
+                            if (isAuthenticated) {
+                              setState(() {
+                                this.isAuthenticated = true;
+                              });
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      TelaInicial(username: enteredUsername),
+                                ),
+                              );
+                            } else {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: Text('Erro de autenticação'),
+                                    content: Text(
+                                        'Credenciais inválidas. Por favor, tente novamente.'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Text('OK'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: Text('Erro de autenticação'),
+                                  content: Text(
+                                      'Credenciais inválidas. Por favor, tente novamente.'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text('OK'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          }
+                        },
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Color.fromARGB(255, 0, 0, 0)),
+                          minimumSize: MaterialStateProperty.all<Size>(
+                            Size(200, 50),
+                          ),
+                        ),
+                        child: Text(
+                          'LOGIN',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18.0,
+                          ),
+                        ),
+                      ),
+                      if (isAuthenticated)
+                        Text(
+                          'Autenticado!',
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      SizedBox(height: 150.0),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => CadastroScreen(),
+                                ),
+                              );
+                            },
+                            style: TextButton.styleFrom(
+                              primary: const Color.fromARGB(255, 0, 0, 0),
+                            ),
+                            child: Text(
+                              'SIGN UP',
+                              style: TextStyle(
+                                fontSize: 14.0,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

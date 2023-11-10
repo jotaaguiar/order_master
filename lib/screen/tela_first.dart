@@ -1,39 +1,38 @@
 import 'package:flutter/material.dart';
+import 'login_screen.dart';
 
-class TelaFirst extends StatelessWidget {
+class TelaFirst extends StatefulWidget {
+  @override
+  _TelaFirstState createState() => _TelaFirstState();
+}
+
+class _TelaFirstState extends State<TelaFirst> {
+  @override
+  void initState() {
+    super.initState();
+    
+    // Adicione um delay de 2 segundos antes de navegar para a tela LoginScreen
+    Future.delayed(Duration(seconds: 3), () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color.fromARGB(255, 102, 214, 10), Color.fromARGB(255, 190, 0, 0)],
-          ),
-        ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.star,
-                size: 100,
-                color: Colors.yellow,
-              ),
-              SizedBox(height: 16.0),
-              Text(
-                '',
-                style: TextStyle(
-                  color: Colors.blueGrey,
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              SizedBox(height: 8.0),
-              // Adicione outros widgets aqui
-            ],
-          ),
+      backgroundColor: Color(0xFFCCAA7D), // Cor de fundo
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Image.asset('images/LogoOrderMasterFinal.png', width: 200, height: 200),
+            ),
+          ],
         ),
       ),
     );

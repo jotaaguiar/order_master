@@ -25,3 +25,8 @@ flutter:
 
   uses-material-design: true
 
+  assets:
+    - images/LogoOrderMaster.jpg
+    - images/LogoOrderMaster.png
+    - images/LogoOrderMasterFinal.png
+
