@@ -35,3 +35,16 @@ class PedidoProvider extends ChangeNotifier {
   }
 }
 
+class MesaProvider extends ChangeNotifier {
+  Map<String, bool> _mesasOcupadas = {};
+
+  bool mesaOcupada(String numeroMesa) {
+    return _mesasOcupadas[numeroMesa] ?? false;
+  }
+
+  void marcarOcupacao(String numeroMesa, bool ocupada) {
+    _mesasOcupadas[numeroMesa] = ocupada;
+    notifyListeners();
+  }
+}
+

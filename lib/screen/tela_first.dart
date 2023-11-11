@@ -10,7 +10,6 @@ class _TelaFirstState extends State<TelaFirst> {
   @override
   void initState() {
     super.initState();
-    
     // Adicione um delay de 2 segundos antes de navegar para a tela LoginScreen
     Future.delayed(Duration(seconds: 3), () {
       Navigator.push(

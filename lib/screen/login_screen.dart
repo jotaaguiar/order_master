@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
+import 'package:order_master/Services/authentication_service.dart';
 import 'tela_cadastro.dart';
 import 'tela_inicial.dart';
 
@@ -10,46 +9,10 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  TextEditingController usernameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  bool isAuthenticated = false;
-  Database? database;
-
-  Future<void> _initDatabase() async {
-    final dbPath = await getDatabasesPath();
-    database = await openDatabase(
-      join(dbPath, 'cadastro_bancodedados.db'),
-      version: 1,
-    );
-
-    if (database?.isOpen != true) {
-      database = await openDatabase(
-        join(dbPath, 'cadastro_bancodedados.db'),
-        version: 1,
-      );
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _initDatabase();
-  }
-
-  Future<bool> authenticateUser(String username, String password) async {
-    if (database == null) {
-      print("O banco de dados não foi inicializado corretamente.");
-      return false;
-    }
-
-    final List<Map<String, dynamic>> result = await database!.query(
-      'cadastro',
-      where: 'username = ? AND password = ?',
-      whereArgs: [username, password],
-    );
-
-    return result.isNotEmpty;
-  }
+  String errorMessage = '';
+  authentication_service _authService = authentication_service();
 
   @override
   Widget build(BuildContext context) {
@@ -61,14 +24,14 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(
-                padding: EdgeInsets.only(top: 120.0),
+                padding: EdgeInsets.only(top: 135.0),
                 child: Image.asset(
                   'images/LogoOrderMasterFinal.png',
                   width: 172,
                   height: 172,
                 ),
               ),
-              SizedBox(height: 10.0),
+              SizedBox(height: 5.0),
               Center(
                 child: Padding(
                   padding: const EdgeInsets.all(55.0),
@@ -76,9 +39,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       TextFormField(
-                        controller: usernameController,
+                        controller: emailController,
                         decoration: InputDecoration(
-                          labelText: 'Username',
+                          labelText: 'E-mail',
                           labelStyle: TextStyle(
                             color: Colors.black,
                             fontSize: 16.0,
@@ -122,35 +85,39 @@ class _LoginScreenState extends State<LoginScreen> {
                       SizedBox(height: 50.0),
                       ElevatedButton(
                         onPressed: () async {
-                          final enteredUsername = usernameController.text;
+                          final enteredEmail = emailController.text;
                           final enteredPassword = passwordController.text;
 
-                          if (enteredUsername.isNotEmpty &&
+                          if (enteredEmail.isNotEmpty &&
                               enteredPassword.isNotEmpty) {
-                            final isAuthenticated = await authenticateUser(
-                              enteredUsername,
-                              enteredPassword,
+                            final result = await _authService.authUser(
+                              email: enteredEmail,
+                              password: enteredPassword,
                             );
 
-                            if (isAuthenticated) {
-                              setState(() {
-                                this.isAuthenticated = true;
-                              });
+                            if (result == null) {
+                              // Autenticação bem-sucedida
+                              final displayName = _authService.getDisplayName();
+
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      TelaInicial(username: enteredUsername),
+                                      TelaInicial(username: displayName ?? ''),
                                 ),
                               );
                             } else {
+                              // Autenticação falhou, result contém a mensagem de erro
+                              setState(() {
+                                errorMessage = result;
+                              });
+
                               showDialog(
                                 context: context,
                                 builder: (context) {
                                   return AlertDialog(
                                     title: Text('Erro de autenticação'),
-                                    content: Text(
-                                        'Credenciais inválidas. Por favor, tente novamente.'),
+                                    content: Text('Erro de autenticação'),
                                     actions: [
                                       TextButton(
                                         onPressed: () {
@@ -170,7 +137,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 return AlertDialog(
                                   title: Text('Erro de autenticação'),
                                   content: Text(
-                                      'Credenciais inválidas. Por favor, tente novamente.'),
+                                    'Credenciais inválidas. Por favor, tente novamente.',
+                                  ),
                                   actions: [
                                     TextButton(
                                       onPressed: () {
@@ -187,7 +155,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(
                               Color.fromARGB(255, 0, 0, 0)),
-                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15.0),
                             ),
@@ -204,15 +173,15 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       ),
-                      if (isAuthenticated)
+                      if (errorMessage.isNotEmpty)
                         Text(
-                          'Autenticado!',
+                          errorMessage,
                           style: TextStyle(
-                            color: Colors.green,
+                            color: Colors.red,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                      SizedBox(height: 160.0),
+                      SizedBox(height: 100.0),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -230,7 +199,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: Text(
                               'SIGN UP',
                               style: TextStyle(
-                                fontSize: 14.0,
+                                fontSize: 18.0,
                               ),
                             ),
                           ),

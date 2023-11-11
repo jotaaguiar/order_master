@@ -1,4 +1,6 @@
+
 import 'package:flutter/material.dart';
+import 'package:order_master/Services/authentication_service.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as path;
 import 'login_screen.dart';
@@ -14,48 +16,19 @@ class _CadastroScreenState extends State<CadastroScreen> {
   TextEditingController confirmEmailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   late Database database;
+  authentication_service _authService = authentication_service();
 
-  @override
-  void initState() {
-    super.initState();
-    _initDatabase();
-  }
-
-  Future<void> _initDatabase() async {
-    final dbPath =
-        path.join(await getDatabasesPath(), 'cadastro_bancodedados.db');
-    database = await openDatabase(dbPath, version: 1,
-        onCreate: (Database db, int version) async {
-      await db.execute(
-        'CREATE TABLE cadastro(idCad INTEGER PRIMARY KEY,username TEXT, email TEXT, password TEXT)',
-      );
-    });
-  }
-
-  Future<void> saveCadastro(String username, String email, String password) async {
-    if (database == null) {
-      print("O banco de dados não foi inicializado corretamente.");
-      return;
-    }
-
-    await database.insert(
-      'cadastro',
-      {
-        //'nome' : name,
-        'username': username,
-        'email': email,
-        'password': password,
-      },
-    );
-
-    showSuccessDialog(context,username);
-    //print('Nome : $name')
+  Future<void> saveCadastro(
+      String username, String email, String password) async {
+    _authService.registerUser(
+        username: username, email: email, password: password);
+    showSuccessDialog(context, username);
     print('Nome de Usuário: $username');
     print('Email: $email');
     print('Senha: $password');
   }
 
-  void showSuccessDialog(BuildContext context,String username) {
+  void showSuccessDialog(BuildContext context, String username) {
     showDialog(
       context: context,
       builder: (context) {
@@ -83,104 +56,159 @@ class _CadastroScreenState extends State<CadastroScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Cadastro de Usuário',
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.grey[800],
-        iconTheme: IconThemeData(color: Colors.white),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextFormField(
-              controller: usernameController,
-              decoration: InputDecoration(
-                    labelText: 'Nome de usuário',
-                    labelStyle: TextStyle(color: Colors.grey), // Define a cor cinza do rótulo
+      body: SingleChildScrollView(
+        child: Container(
+          color: const Color(0xFFA2836E),
+          child: Padding(
+            padding: const EdgeInsets.all(55.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 40.0),
+                  child: Image.asset(
+                    'images/LogoOrderMasterFinal.png',
+                    width: 150,
+                    height: 150,
+                  ),
+                ),
+                TextFormField(
+                  controller: usernameController,
+                  decoration: InputDecoration(
+                    labelText: 'Username',
+                    labelStyle: TextStyle(color: Colors.black),
                     focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey), // Define a borda cinza enquanto está focado
+                      borderSide: BorderSide(color: Colors.black),
+                    ),
+                    contentPadding: EdgeInsets.only(bottom: 8),
+                    prefixIcon: Icon(
+                      Icons.person,
+                      color: Colors.black,
                     ),
                   ),
-              
-            ),
-            SizedBox(height: 16.0),
-            TextFormField(
-              controller: emailController,
-              decoration: InputDecoration(
+                ),
+                SizedBox(height: 16.0),
+                TextFormField(
+                  controller: emailController,
+                  decoration: InputDecoration(
                     labelText: 'E-mail',
-                    labelStyle: TextStyle(color: Colors.grey), // Define a cor cinza do rótulo
+                    labelStyle: TextStyle(color: Colors.black),
                     focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey), // Define a borda cinza enquanto está focado
+                      borderSide: BorderSide(color: Colors.black),
+                    ),
+                    contentPadding: EdgeInsets.only(bottom: 8),
+                    prefixIcon: Icon(
+                      Icons.email,
+                      color: Colors.black,
                     ),
                   ),
-              keyboardType: TextInputType.emailAddress,
-            ),
-            SizedBox(height: 16.0),
-            TextFormField(
-              controller: confirmEmailController,
-             decoration: InputDecoration(
-                    labelText: 'Confirmação de e-mail',
-                    labelStyle: TextStyle(color: Colors.grey), // Define a cor cinza do rótulo
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                SizedBox(height: 16.0),
+                TextFormField(
+                  controller: confirmEmailController,
+                  decoration: InputDecoration(
+                    labelText: 'E-Mail',
+                    labelStyle: TextStyle(color: Colors.black),
                     focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey), // Define a borda cinza enquanto está focado
+                      borderSide: BorderSide(color: Colors.black),
+                    ),
+                    contentPadding: EdgeInsets.only(bottom: 8),
+                    prefixIcon: Icon(
+                      Icons.email,
+                      color: Colors.black,
                     ),
                   ),
-              keyboardType: TextInputType.emailAddress,
-            ),
-            SizedBox(height: 16.0),
-            TextFormField(
-              controller: passwordController,
-              decoration: InputDecoration(
-                    labelText: 'Senha',
-                    labelStyle: TextStyle(color: Colors.grey), // Define a cor cinza do rótulo
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                SizedBox(height: 16.0),
+                TextFormField(
+                  controller: passwordController,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    labelStyle: TextStyle(color: Colors.black),
                     focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey), // Define a borda cinza enquanto está focado
+                      borderSide: BorderSide(color: Colors.black),
+                    ),
+                    contentPadding: EdgeInsets.only(bottom: 8),
+                    prefixIcon: Icon(
+                      Icons.lock,
+                      color: Colors.black,
                     ),
                   ),
-              obscureText: true,
-            ),
-            SizedBox(height: 16.0),
-            ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all(Colors.grey[800]), // Cor azul
-              ),
-              onPressed: () async {
-                final email = emailController.text;
-                final confirmEmail = confirmEmailController.text;
-                final password = passwordController.text;
-                final username = usernameController.text;
+                  obscureText: true,
+                ),
+                SizedBox(height: 55.0),
+                ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        Color.fromARGB(255, 0, 0, 0)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                    ),
+                    minimumSize: MaterialStateProperty.all<Size>(
+                      Size(200, 50),
+                    ),
+                  ),
+                  onPressed: () async {
+                    final email = emailController.text;
+                    final confirmEmail = confirmEmailController.text;
+                    final password = passwordController.text;
+                    final username = usernameController.text;
 
-                if (email == confirmEmail) {
-                  await saveCadastro(username, email, password);
-                } else {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: Text('Erro de cadastro'),
-                        content: Text(
-                            'Verifique os campos de email. Por favor, tente novamente.'),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Text('OK'),
-                          ),
-                        ],
+                    if (email == confirmEmail) {
+                      await saveCadastro(username, email, password);
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text('Erro de cadastro'),
+                            content: Text(
+                                'Verifique os campos de email. Por favor, tente novamente.'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
                       );
-                    },
-                  );
-                }
-              },
-              child: Text('Cadastrar'),
+                    }
+                  },
+                  child: Text(
+                    'SIGN UP',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18.0,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 80.0),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (context) => LoginScreen(),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    'LOGIN',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 18.0,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
