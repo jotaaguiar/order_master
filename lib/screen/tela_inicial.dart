@@ -16,7 +16,7 @@ class TelaInicial extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Salão', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.grey[800],
+        backgroundColor: Color(0xFFA2836E),
         iconTheme: IconThemeData(color: Colors.white),
         automaticallyImplyLeading: false,
         actions: [
@@ -73,6 +73,7 @@ class TelaInicial extends StatelessWidget {
             SizedBox(height: 2.0),
             Center(
               child: Container(
+           
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
