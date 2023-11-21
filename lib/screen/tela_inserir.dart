@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:order_master/providers/pedido_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -14,30 +13,25 @@ class TelaInserir extends StatefulWidget {
 }
 
 class _TelaInserirState extends State<TelaInserir> {
-  List<Map<String, dynamic>> opcoes = [];
-  Map<String, String?> observacoes = {};
-  Map<String, int> quantidades = {};
+  late List<Map<String, dynamic>> opcoes;
+  late Map<String, String?> observacoes;
+  late Map<String, int> quantidades;
+  late CollectionReference<Map<String, dynamic>> menuCollection;
 
   @override
   void initState() {
     super.initState();
     _carregarOpcoesDoCardapio();
+    menuCollection = FirebaseFirestore.instance.collection('menu');
   }
 
   Future<void> _carregarOpcoesDoCardapio() async {
-    final dbPath = await getDatabasesPath();
-    final database = await openDatabase(
-      join(dbPath, 'cardapio.db'),
-      version: 1,
-    );
-
-    final opcoesCarregadas = await database.query('itens');
+    QuerySnapshot<Map<String, dynamic>> querySnapshot =
+        await menuCollection.get();
 
     setState(() {
-      opcoes = opcoesCarregadas;
+      opcoes = querySnapshot.docs.map((doc) => doc.data()).toList();
     });
-
-    await database.close();
   }
 
   @override
@@ -115,12 +109,14 @@ class _TelaInserirState extends State<TelaInserir> {
     );
   }
 
-  void adicionarPedidos(BuildContext context, PedidoProvider pedidoProvider) {
+  Future<void> adicionarPedidos(
+      BuildContext context, PedidoProvider pedidoProvider) async {
     final List<Map<String, dynamic>> pedidosComQuantidade = [];
 
     for (final opcao in observacoes.keys) {
       final nome = opcao;
-      final preco = opcoes.firstWhere((opcao) => opcao['nome'] == nome)['preco'];
+      final preco =
+          opcoes.firstWhere((opcao) => opcao['nome'] == nome)['preco'];
       final observacao = observacoes[nome] ?? "";
       final quantidade = quantidades[nome] ?? 1;
 
@@ -243,3 +239,9 @@ class OpcaoBox extends StatelessWidget {
     );
   }
 }
+
+
+
+
+
+

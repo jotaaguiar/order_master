@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as path;
+import 'package:order_master/services/menu_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class TelaCardapio extends StatefulWidget {
   @override
@@ -8,61 +11,9 @@ class TelaCardapio extends StatefulWidget {
 }
 
 class _TelaCardapioState extends State<TelaCardapio> {
-  late Database database;
   final nomeController = TextEditingController();
   final precoController = TextEditingController();
-  List<Map<String, dynamic>> itens = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _initDatabase();
-  }
-
-  Future<void> _initDatabase() async {
-    final dbPath = await getDatabasesPath();
-    final databasePath = path.join(dbPath, 'cardapio.db');
-
-    database = await openDatabase(
-      databasePath,
-      version: 1,
-      onCreate: (db, version) {
-        db.execute('CREATE TABLE itens (id INTEGER PRIMARY KEY, nome TEXT, preco REAL)');
-      },
-    );
-
-    _carregarItens();
-  }
-
-  Future<void> _carregarItens() async {
-    final resultados = await database.query('itens');
-    setState(() {
-      itens = resultados;
-    });
-  }
-
-  Future<void> adicionarItem() async {
-    final nome = nomeController.text;
-    final preco = double.tryParse(precoController.text) ?? 0.0;
-
-    if (nome.isNotEmpty && preco > 0) {
-      await database.insert('itens', {'nome': nome, 'preco': preco});
-      nomeController.clear();
-      precoController.clear();
-      mostrarSnackBar('Item adicionado com sucesso');
-      _carregarItens();
-    }
-  }
-
-  Future<void> removerItem(int id) async {
-    await database.delete('itens', where: 'id = ?', whereArgs: [id]);
-    mostrarSnackBar('Item removido com sucesso');
-    _carregarItens();
-  }
-
-  void mostrarSnackBar(String mensagem) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(mensagem)));
-  }
+  final MenuService _menuService = MenuService();
 
   @override
   Widget build(BuildContext context) {
@@ -84,28 +35,28 @@ class _TelaCardapioState extends State<TelaCardapio> {
             TextFormField(
               controller: nomeController,
               decoration: InputDecoration(
-                    labelText: 'Nome do Item',
-                    labelStyle: TextStyle(color: Colors.grey), // Define a cor cinza do rótulo
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey), // Define a borda cinza enquanto está focado
-                    ),
-                  ),
+                labelText: 'Nome do Item',
+                labelStyle: TextStyle(color: Colors.grey),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                ),
+              ),
             ),
             TextFormField(
               controller: precoController,
               decoration: InputDecoration(
-                    labelText: 'Preço',
-                    labelStyle: TextStyle(color: Colors.grey), // Define a cor cinza do rótulo
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey), // Define a borda cinza enquanto está focado
-                    ),
-                  ),
+                labelText: 'Preço',
+                labelStyle: TextStyle(color: Colors.grey),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                ),
+              ),
               keyboardType: TextInputType.number,
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                primary: Colors.grey[600], // Cor de fundo cinza
-                onPrimary: Colors.white, // Cor do texto branco
+                primary: Colors.grey[600],
+                onPrimary: Colors.white,
               ),
               onPressed: () {
                 adicionarItem();
@@ -118,19 +69,30 @@ class _TelaCardapioState extends State<TelaCardapio> {
               style: TextStyle(fontSize: 18.0),
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: itens.length,
-                itemBuilder: (context, index) {
-                  final item = itens[index];
-                  return ListTile(
-                    title: Text(item['nome']),
-                    subtitle: Text('Preço: ${item['preco']}'),
-                    trailing: IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () {
-                        removerItem(item['id']);
-                      },
-                    ),
+              child: StreamBuilder<QuerySnapshot>(
+                stream: _menuService.getMenuStream(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return CircularProgressIndicator();
+                  }
+
+                  var items = snapshot.data!.docs;
+
+                  return ListView.builder(
+                    itemCount: items.length,
+                    itemBuilder: (context, index) {
+                      var item = items[index].data() as Map<String, dynamic>;
+                      return ListTile(
+                        title: Text(item['nome']),
+                        subtitle: Text('Preço: ${item['preco']}'),
+                        trailing: IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: () {
+                            removerItem(items[index].id);
+                          },
+                        ),
+                      );
+                    },
                   );
                 },
               ),
@@ -139,5 +101,21 @@ class _TelaCardapioState extends State<TelaCardapio> {
         ),
       ),
     );
+  }
+
+  void adicionarItem() async {
+    final nome = nomeController.text;
+    final preco = double.tryParse(precoController.text) ?? 0.0;
+
+    if (nome.isNotEmpty && preco > 0) {
+      await _menuService.adicionarItem(nome, preco);
+
+      nomeController.clear();
+      precoController.clear();
+    }
+  }
+
+  void removerItem(String itemId) async {
+    await _menuService.removerItem(itemId);
   }
 }
