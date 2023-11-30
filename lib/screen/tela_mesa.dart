@@ -25,7 +25,7 @@ class _TelaMesaState extends State<TelaMesa> {
           '${widget.numeroMesa}',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.grey[800],
+        backgroundColor:  Color(0xFFA2836E),
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: Center(

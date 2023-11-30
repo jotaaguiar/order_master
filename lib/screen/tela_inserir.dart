@@ -49,21 +49,21 @@ class _TelaInserirState extends State<TelaInserir> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Inserir Pedido - ${widget.numeroMesa} '),
-        backgroundColor: Colors.grey[800],
+        title: Text('Inserir Pedido - ${widget.numeroMesa} ', style: TextStyle(color: Colors.white)),
+        backgroundColor: Color(0xFFA2836E),
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                'Selecione uma opção:',
-                style: TextStyle(fontSize: 18),
-              ),
-            ),
+            //Padding(
+              //padding: EdgeInsets.all(16.0),
+              //child: Text(
+                //'Selecione uma opção:',
+                //style: TextStyle(fontSize: 18),
+              //),
+            //),
             Container(
               padding: EdgeInsets.all(16.0),
               child: Column(
@@ -110,7 +110,7 @@ class _TelaInserirState extends State<TelaInserir> {
               onPressed: () {
                 adicionarPedidos(context, pedidoProvider);
               },
-              child: Text('Adicionar Pedidos'),
+              child: Text('Concluir Pedido'),
             ),
           ],
         ),

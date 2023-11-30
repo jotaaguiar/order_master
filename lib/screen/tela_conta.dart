@@ -81,6 +81,7 @@ class _TelaContaState extends State<TelaConta> {
 
       // Atualize o valor por pessoa
       atualizarValorPorPessoa();
+      removerPessoa();
     });
   }
 
