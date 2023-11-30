@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'tela_cardapio.dart';
 import 'login_screen.dart';
+import 'screen_add_table.dart';
 class TelaConfig extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -36,6 +37,18 @@ class TelaConfig extends StatelessWidget {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => TelaCardapio()));
               },
               child: Text('Configuração Cardápio'),
+            ),
+            SizedBox(height: 16.0),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: Colors.grey[600], // Cor de fundo cinza
+                onPrimary: Colors.white, // Cor do texto branco
+              ),
+              onPressed: () {
+                // Navegar para a tela de adicionar itens ao cardápio
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ScreenAddTable()));
+              },
+              child: Text('Configuração Salão'),
             ),
             SizedBox(height: 16.0), // Adicione espaço entre os botões
             ElevatedButton(

@@ -88,6 +88,7 @@ class _TelaCardapioState extends State<TelaCardapio> {
                         trailing: IconButton(
                           icon: Icon(Icons.delete),
                           onPressed: () {
+                            print(items[index].id);
                             removerItem(items[index].id);
                           },
                         ),

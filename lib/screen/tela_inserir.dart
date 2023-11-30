@@ -16,22 +16,31 @@ class _TelaInserirState extends State<TelaInserir> {
   late List<Map<String, dynamic>> opcoes;
   late Map<String, String?> observacoes;
   late Map<String, int> quantidades;
-  late CollectionReference<Map<String, dynamic>> menuCollection;
+
+  late CollectionReference<Map<String, dynamic>> orderCollection;
+  late Stream<QuerySnapshot<Map<String, dynamic>>> menuStream;
 
   @override
   void initState() {
     super.initState();
-    _carregarOpcoesDoCardapio();
-    menuCollection = FirebaseFirestore.instance.collection('menu');
+    observacoes = {};
+    quantidades = {};
+    opcoes = [];
+    orderCollection = FirebaseFirestore.instance
+        .collection('orders')
+        .doc(widget.numeroMesa)
+        .collection('pedidos');
+    menuStream = getMenuStream();
+
+    menuStream.listen((querySnapshot) {
+      setState(() {
+        opcoes = querySnapshot.docs.map((doc) => doc.data()).toList();
+      });
+    });
   }
 
-  Future<void> _carregarOpcoesDoCardapio() async {
-    QuerySnapshot<Map<String, dynamic>> querySnapshot =
-        await menuCollection.get();
-
-    setState(() {
-      opcoes = querySnapshot.docs.map((doc) => doc.data()).toList();
-    });
+  Stream<QuerySnapshot<Map<String, dynamic>>> getMenuStream() {
+    return FirebaseFirestore.instance.collection('menu').snapshots();
   }
 
   @override
@@ -40,7 +49,7 @@ class _TelaInserirState extends State<TelaInserir> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.numeroMesa} - Inserir Pedido'),
+        title: Text('Inserir Pedido - ${widget.numeroMesa} '),
         backgroundColor: Colors.grey[800],
         iconTheme: IconThemeData(color: Colors.white),
       ),
@@ -121,7 +130,8 @@ class _TelaInserirState extends State<TelaInserir> {
       final quantidade = quantidades[nome] ?? 1;
 
       for (int i = 0; i < quantidade; i++) {
-        pedidosComQuantidade.add({
+        // Adicione o pedido à subcoleção de pedidos no documento da mesa
+        await orderCollection.add({
           'nome': nome,
           'preco': preco,
           'observacao': observacao,
@@ -132,21 +142,14 @@ class _TelaInserirState extends State<TelaInserir> {
       }
     }
 
-    final pedidos = pedidosComQuantidade.map((pedido) {
-      final nome = pedido['nome'];
-      final preco = pedido['preco'];
-      final observacao = pedido['observacao'];
-
-      return "$nome - Preço: R\$${preco.toStringAsFixed(2)} - Observação: $observacao";
-    }).toList();
-
-    pedidoProvider.adicionarPedidos(pedidos);
-
     setState(() {
       observacoes.clear();
       quantidades.clear();
     });
-
+    await FirebaseFirestore.instance.collection('table').doc('mesas').update({
+      widget.numeroMesa: {'status': 'ocupado'}
+    });
+    // ignore: use_build_context_synchronously
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Pedidos adicionados com sucesso!'),
@@ -239,9 +242,3 @@ class OpcaoBox extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-

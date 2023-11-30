@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:order_master/providers/pedido_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TelaConta extends StatefulWidget {
   final String numeroMesa;
@@ -24,10 +23,24 @@ class _TelaContaState extends State<TelaConta> {
     calcularTotalDaConta();
   }
 
-  void calcularTotalDaConta() {
-    final pedidoProvider = Provider.of<PedidoProvider>(context, listen: false);
-    totalDaConta = pedidoProvider.precos.fold(0, (a, b) => a + b);
-    atualizarValorPorPessoa();
+  Future<void> calcularTotalDaConta() async {
+    var pedidos = await FirebaseFirestore.instance
+        .collection('orders')
+        .doc(widget.numeroMesa)
+        .collection('pedidos')
+        .get();
+
+    if (mounted) {
+      setState(() {
+        totalDaConta = pedidos.docs.fold<double>(
+          0,
+          (total, pedido) => total + (pedido['preco'] as double? ?? 0),
+        );
+
+        // Atualize o valor por pessoa
+        atualizarValorPorPessoa();
+      });
+    }
   }
 
   void atualizarValorPorPessoa() {
@@ -65,11 +78,8 @@ class _TelaContaState extends State<TelaConta> {
 
       // Reduz o valor total da conta pelo valor que a pessoa pagou
       totalDaConta -= valorPago;
-      // Verifica se o total ficou negativo e ajusta
-      if (totalDaConta < 0) {
-        totalDaConta = 0;
-      }
 
+      // Atualize o valor por pessoa
       atualizarValorPorPessoa();
     });
   }
@@ -83,10 +93,24 @@ class _TelaContaState extends State<TelaConta> {
     });
   }
 
-  void removerTodosOsPedidos() {
-    final pedidoProvider = Provider.of<PedidoProvider>(context, listen: false);
-    pedidoProvider.removerTodosPedidos();
-    calcularTotalDaConta();
+  void removerTodosOsPedidos() async {
+    var pedidos = await FirebaseFirestore.instance
+        .collection('orders')
+        .doc(widget.numeroMesa)
+        .collection('pedidos')
+        .get();
+
+    await FirebaseFirestore.instance.collection('table').doc('mesas').update({
+      widget.numeroMesa: {'status': 'livre'}
+    });
+
+    for (var pedido in pedidos.docs) {
+      await pedido.reference.delete();
+    }
+
+    await calcularTotalDaConta(); // Aguarde a conclusão antes de continuar
+
+// Redesenha o widget após a atualização
   }
 
   @override
@@ -126,17 +150,25 @@ class _TelaContaState extends State<TelaConta> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Consumer<PedidoProvider>(
-                    builder: (context, pedidoProvider, child) {
-                      final pedidos = pedidoProvider.pedidos;
+                  StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                    stream: getPedidosStream(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return CircularProgressIndicator();
+                      }
+
+                      var pedidos = snapshot.data!.docs;
+
                       return Column(
                         children: pedidos.map((pedido) {
+                          var pedidoData =
+                              pedido.data() as Map<String, dynamic>;
                           return Container(
                             color: Colors.white,
                             margin: EdgeInsets.symmetric(vertical: 4.0),
                             padding: EdgeInsets.all(16.0),
                             child: Text(
-                              pedido,
+                              "${pedidoData['nome']} - Preço: R\$${pedidoData['preco'].toStringAsFixed(2)} - Observação: ${pedidoData['observacao']}",
                               style: TextStyle(
                                 fontSize: 16,
                               ),
@@ -157,7 +189,8 @@ class _TelaContaState extends State<TelaConta> {
                 children: [
                   ElevatedButton(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.grey[600]),
+                      backgroundColor:
+                          MaterialStateProperty.all(Colors.grey[600]),
                     ),
                     onPressed: adicionarPessoa,
                     child: Text('Adicionar Pessoa'),
@@ -165,7 +198,8 @@ class _TelaContaState extends State<TelaConta> {
                   SizedBox(width: 8),
                   ElevatedButton(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.grey[600]),
+                      backgroundColor:
+                          MaterialStateProperty.all(Colors.grey[600]),
                     ),
                     onPressed: removerPessoa,
                     child: Text('Remover Pessoa'),
@@ -291,7 +325,7 @@ class _TelaContaState extends State<TelaConta> {
                               // Voltar para a tela inicial
                               Navigator.of(context).pop();
                               Navigator.of(context).pop();
-                              Navigator.of(context).pop(); 
+                              Navigator.of(context).pop();
                             },
                             child: Text('OK'),
                           ),
@@ -307,5 +341,13 @@ class _TelaContaState extends State<TelaConta> {
         ),
       ),
     );
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getPedidosStream() {
+    return FirebaseFirestore.instance
+        .collection('orders')
+        .doc(widget.numeroMesa)
+        .collection('pedidos')
+        .snapshots();
   }
 }

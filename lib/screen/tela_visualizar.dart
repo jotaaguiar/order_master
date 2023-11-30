@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:order_master/providers/pedido_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TelaVisualizar extends StatelessWidget {
   final String numeroMesa;
@@ -27,8 +26,7 @@ class TelaVisualizar extends StatelessWidget {
               margin: EdgeInsets.all(5.0),
               decoration: BoxDecoration(
                 color: Colors.grey[600],
-                borderRadius:
-                    BorderRadius.circular(10.0), // Border radius de 10
+                borderRadius: BorderRadius.circular(10.0),
               ),
               child: Text(
                 'Pedidos:',
@@ -42,23 +40,27 @@ class TelaVisualizar extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Consumer<PedidoProvider>(
-                  builder: (context, pedidoProvider, child) {
-                    final pedidos = pedidoProvider.pedidos;
-                    final precoTotal = pedidoProvider.calcularPrecoTotal();
+                StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                  stream: getPedidosStream(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return CircularProgressIndicator();
+                    }
+
+                    var pedidos = snapshot.data!.docs;
+
                     return Column(
                       children: pedidos.map((pedido) {
+                        var pedidoData = pedido.data() as Map<String, dynamic>;
                         return Container(
-
                           margin: EdgeInsets.symmetric(vertical: 4.0),
                           padding: EdgeInsets.all(16.0),
                           decoration: BoxDecoration(
                             color: const Color.fromARGB(255, 194, 194, 194),
-                            borderRadius: BorderRadius.circular(
-                                10.0), // Border radius de 10
+                            borderRadius: BorderRadius.circular(10.0),
                           ),
                           child: Text(
-                            pedido,
+                            "${pedidoData['nome']} - Preço: R\$${pedidoData['preco'].toStringAsFixed(2)} - Observação: ${pedidoData['observacao']}",
                             style: TextStyle(
                               fontSize: 16,
                             ),
@@ -74,14 +76,24 @@ class TelaVisualizar extends StatelessWidget {
             Container(
               decoration: BoxDecoration(
                 color: Colors.grey[600],
-                borderRadius:
-                    BorderRadius.circular(10.0), // Border radius de 10
+                borderRadius: BorderRadius.circular(10.0),
               ),
               padding: EdgeInsets.all(16.0),
               margin: EdgeInsets.all(5.0),
-              child: Consumer<PedidoProvider>(
-                builder: (context, pedidoProvider, child) {
-                  final precoTotal = pedidoProvider.calcularPrecoTotal();
+              child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                stream: getPedidosStream(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return CircularProgressIndicator();
+                  }
+
+                  var pedidos = snapshot.data!.docs;
+
+                  final precoTotal = pedidos.fold<double>(
+                    0,
+                    (total, pedido) => total + (pedido['preco'] as double),
+                  );
+
                   return Text(
                     'Preço Total: R\$ ${precoTotal.toStringAsFixed(2)}',
                     style: TextStyle(
@@ -96,5 +108,13 @@ class TelaVisualizar extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getPedidosStream() {
+    return FirebaseFirestore.instance
+        .collection('orders')
+        .doc(numeroMesa)
+        .collection('pedidos')
+        .snapshots();
   }
 }
