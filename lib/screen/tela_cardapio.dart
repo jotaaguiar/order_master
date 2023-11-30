@@ -104,17 +104,25 @@ class _TelaCardapioState extends State<TelaCardapio> {
     );
   }
 
-  void adicionarItem() async {
-    final nome = nomeController.text;
-    final preco = double.tryParse(precoController.text) ?? 0.0;
+  
 
-    if (nome.isNotEmpty && preco > 0) {
+void adicionarItem() async {
+  final nome = nomeController.text;
+  final preco = double.tryParse(precoController.text) ?? 0.0;
+
+  if (nome.isNotEmpty && preco > 0) {
+    try {
       await _menuService.adicionarItem(nome, preco);
 
+      // Clear the text controllers after the item is successfully added
       nomeController.clear();
       precoController.clear();
+    } catch (e) {
+      print("Error adding item: $e");
+      // Handle the error, e.g., show a snackbar or log the error
     }
   }
+}
 
   void removerItem(String itemId) async {
     await _menuService.removerItem(itemId);

@@ -39,6 +39,8 @@ class _TelaInserirState extends State<TelaInserir> {
     });
   }
 
+  Stream<QuerySnapshot<Map<String, dynamic>>> get newMethod => menuStream;
+
   Stream<QuerySnapshot<Map<String, dynamic>>> getMenuStream() {
     return FirebaseFirestore.instance.collection('menu').snapshots();
   }
