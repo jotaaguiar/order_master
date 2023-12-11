@@ -39,8 +39,6 @@ class _TelaInserirState extends State<TelaInserir> {
     });
   }
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> get newMethod => menuStream;
-
   Stream<QuerySnapshot<Map<String, dynamic>>> getMenuStream() {
     return FirebaseFirestore.instance.collection('menu').snapshots();
   }
@@ -51,7 +49,8 @@ class _TelaInserirState extends State<TelaInserir> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Inserir Pedido - ${widget.numeroMesa} ', style: TextStyle(color: Colors.white)),
+        title: Text('Inserir Pedido - ${widget.numeroMesa} ',
+            style: TextStyle(color: Colors.white)),
         backgroundColor: Color(0xFFA2836E),
         iconTheme: IconThemeData(color: Colors.white),
       ),
@@ -59,13 +58,6 @@ class _TelaInserirState extends State<TelaInserir> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            //Padding(
-              //padding: EdgeInsets.all(16.0),
-              //child: Text(
-                //'Selecione uma opção:',
-                //style: TextStyle(fontSize: 18),
-              //),
-            //),
             Container(
               padding: EdgeInsets.all(16.0),
               child: Column(
@@ -104,15 +96,19 @@ class _TelaInserirState extends State<TelaInserir> {
                 }).toList(),
               ),
             ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                primary: Colors.grey[600], // Cor de fundo cinza
-                onPrimary: Colors.white, // Cor do texto branco
+            Container(
+              alignment: Alignment.center,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: Color(0xFFA2836E),
+                  onPrimary: Colors.white,
+                  fixedSize: Size(200, 30), // Largura e altura desejadas
+                ),
+                onPressed: () {
+                  adicionarPedidos(context, pedidoProvider);
+                },
+                child: Text('Concluir Pedido'),
               ),
-              onPressed: () {
-                adicionarPedidos(context, pedidoProvider);
-              },
-              child: Text('Concluir Pedido'),
             ),
           ],
         ),
@@ -132,14 +128,12 @@ class _TelaInserirState extends State<TelaInserir> {
       final quantidade = quantidades[nome] ?? 1;
 
       for (int i = 0; i < quantidade; i++) {
-        // Adicione o pedido à subcoleção de pedidos no documento da mesa
         await orderCollection.add({
           'nome': nome,
           'preco': preco,
           'observacao': observacao,
         });
 
-        // Adicione o preço à lista de preços
         pedidoProvider.precos.add(preco);
       }
     }
@@ -151,7 +145,7 @@ class _TelaInserirState extends State<TelaInserir> {
     await FirebaseFirestore.instance.collection('table').doc('mesas').update({
       widget.numeroMesa: {'status': 'ocupado'}
     });
-    // ignore: use_build_context_synchronously
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Pedidos adicionados com sucesso!'),
@@ -184,6 +178,9 @@ class OpcaoBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: isSelected
+          ? Color.fromARGB(255, 143, 233, 155)
+          : Color.fromARGB(255, 240, 218, 204),
       elevation: isSelected ? 5 : 3,
       margin: EdgeInsets.only(bottom: 16),
       child: Padding(

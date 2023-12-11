@@ -13,8 +13,8 @@ class TelaAlterar extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Alterar Pedidos - $numeroMesa'),
-        backgroundColor: Colors.grey[800],
+        title: Text('Alterar Pedido - $numeroMesa',style: TextStyle(color: Colors.white)),
+        backgroundColor:Color(0xFFA2836E),
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(

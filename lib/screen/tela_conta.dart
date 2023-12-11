@@ -111,15 +111,15 @@ class _TelaContaState extends State<TelaConta> {
 
     await calcularTotalDaConta(); // Aguarde a conclusão antes de continuar
 
-// Redesenha o widget após a atualização
+    // Redesenha o widget após a atualização
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Conta'),
-        backgroundColor: Colors.grey[800],
+        title: Text('Conta', style: TextStyle(color: Colors.white)),
+        backgroundColor: Color(0xFFA2836E),
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
@@ -134,16 +134,12 @@ class _TelaContaState extends State<TelaConta> {
               ),
               Divider(),
               Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[600],
-                  borderRadius: BorderRadius.circular(5.0),
-                ),
                 padding: EdgeInsets.all(8.0),
                 child: Text(
                   'Pedidos:',
                   style: TextStyle(
                     fontSize: 18,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                 ),
               ),
@@ -165,7 +161,6 @@ class _TelaContaState extends State<TelaConta> {
                           var pedidoData =
                               pedido.data() as Map<String, dynamic>;
                           return Container(
-                            color: Colors.white,
                             margin: EdgeInsets.symmetric(vertical: 4.0),
                             padding: EdgeInsets.all(16.0),
                             child: Text(
@@ -191,19 +186,19 @@ class _TelaContaState extends State<TelaConta> {
                   ElevatedButton(
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStateProperty.all(Colors.grey[600]),
+                          MaterialStateProperty.all(Color(0xFFA2836E)),
                     ),
                     onPressed: adicionarPessoa,
-                    child: Text('Adicionar Pessoa'),
+                    child: Text('Adicionar Pessoa',style: TextStyle(color: Colors.white)),
                   ),
                   SizedBox(width: 8),
                   ElevatedButton(
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStateProperty.all(Colors.grey[600]),
+                          MaterialStateProperty.all(Color(0xFFA2836E)),
                     ),
                     onPressed: removerPessoa,
-                    child: Text('Remover Pessoa'),
+                    child: Text('Remover Pessoa',style: TextStyle(color: Colors.white)),
                   ),
                 ],
               ),
@@ -214,7 +209,7 @@ class _TelaContaState extends State<TelaConta> {
               ),
               Text(
                 'Pessoas que já pagaram:',
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: 18, color: Colors.black),
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -236,7 +231,7 @@ class _TelaContaState extends State<TelaConta> {
               ),
               ElevatedButton(
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.grey[600]),
+                  backgroundColor: MaterialStateProperty.all(Color(0xFFA2836E)),
                 ),
                 onPressed: () {
                   showDialog(
@@ -246,7 +241,7 @@ class _TelaContaState extends State<TelaConta> {
                       double valorPago = 0.0;
 
                       return AlertDialog(
-                        title: Text('Adicionar Pessoa que Pagou'),
+                        title: Text('Adicionar Pessoa que Pagou',style: TextStyle(color: Colors.black)),
                         content: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
@@ -302,12 +297,12 @@ class _TelaContaState extends State<TelaConta> {
                     },
                   );
                 },
-                child: Text('Adicionar Pessoa que Pagou'),
+                child: Text('Adicionar Pessoa que Pagou',style: TextStyle(color: Colors.white)),
               ),
               Divider(),
               ElevatedButton(
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.grey[600]),
+                  backgroundColor: MaterialStateProperty.all(Color(0xFFA2836E)),
                 ),
                 onPressed: () {
                   // Remover todos os pedidos
@@ -335,7 +330,7 @@ class _TelaContaState extends State<TelaConta> {
                     },
                   );
                 },
-                child: Text('Encerrar conta'),
+                child: Text('Encerrar conta',style: TextStyle(color: Colors.white)),
               ),
             ],
           ),

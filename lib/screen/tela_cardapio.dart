@@ -4,7 +4,6 @@ import 'package:path/path.dart' as path;
 import 'package:order_master/services/menu_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
 class TelaCardapio extends StatefulWidget {
   @override
   _TelaCardapioState createState() => _TelaCardapioState();
@@ -19,55 +18,61 @@ class _TelaCardapioState extends State<TelaCardapio> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Configurações no Cardápio'),
-        backgroundColor: Colors.grey[800],
+        title: Text('Configurações no Cardápio', style: TextStyle(color: Colors.white)),
+        backgroundColor: Color(0xFFA2836E),
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              'Adicionar Itens no Cardápio',
-              style: TextStyle(fontSize: 20.0),
-            ),
+            SizedBox(height: 20.0),
+            Text('Adicionar Itens no Cardápio', style: TextStyle(fontSize: 20.0)),
             SizedBox(height: 20.0),
             TextFormField(
               controller: nomeController,
               decoration: InputDecoration(
                 labelText: 'Nome do Item',
-                labelStyle: TextStyle(color: Colors.grey),
+                labelStyle: TextStyle(color: const Color.fromARGB(255, 107, 106, 106)),
                 focusedBorder: UnderlineInputBorder(
                   borderSide: BorderSide(color: Colors.grey),
                 ),
+                // Ajuste do espaçamento interno para o campo de texto do nome do item
+                contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
               ),
+              style: TextStyle(fontSize: 16.0),
             ),
             TextFormField(
               controller: precoController,
               decoration: InputDecoration(
                 labelText: 'Preço',
-                labelStyle: TextStyle(color: Colors.grey),
+                labelStyle: TextStyle(color: const Color.fromARGB(255, 107, 106, 106)),
                 focusedBorder: UnderlineInputBorder(
                   borderSide: BorderSide(color: Colors.grey),
                 ),
+                // Ajuste do espaçamento interno para o campo de texto do preço
+                contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
               ),
               keyboardType: TextInputType.number,
+              style: TextStyle(fontSize: 16.0),
             ),
+            SizedBox(height: 5.0),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                primary: Colors.grey[600],
+                primary: Color(0xFFA2836E),
                 onPrimary: Colors.white,
+                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
               ),
               onPressed: () {
                 adicionarItem();
               },
-              child: Text('Adicionar Item'),
+              child: Text('Adicionar Item', style: TextStyle(fontSize: 16.0)),
             ),
             SizedBox(height: 20.0),
-            Text(
-              'Itens no Cardápio:',
-              style: TextStyle(fontSize: 18.0),
-            ),
+            Text('Itens no Cardápio:', style: TextStyle(fontSize: 18.0)),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                 stream: _menuService.getMenuStream(),
@@ -104,25 +109,20 @@ class _TelaCardapioState extends State<TelaCardapio> {
     );
   }
 
-  
+  void adicionarItem() async {
+    final nome = nomeController.text;
+    final preco = double.tryParse(precoController.text) ?? 0.0;
 
-void adicionarItem() async {
-  final nome = nomeController.text;
-  final preco = double.tryParse(precoController.text) ?? 0.0;
-
-  if (nome.isNotEmpty && preco > 0) {
-    try {
-      await _menuService.adicionarItem(nome, preco);
-
-      // Clear the text controllers after the item is successfully added
-      nomeController.clear();
-      precoController.clear();
-    } catch (e) {
-      print("Error adding item: $e");
-      // Handle the error, e.g., show a snackbar or log the error
+    if (nome.isNotEmpty && preco > 0) {
+      try {
+        await _menuService.adicionarItem(nome, preco);
+        nomeController.clear();
+        precoController.clear();
+      } catch (e) {
+        print("Error adding item: $e");
+      }
     }
   }
-}
 
   void removerItem(String itemId) async {
     await _menuService.removerItem(itemId);

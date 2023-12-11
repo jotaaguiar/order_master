@@ -17,8 +17,11 @@ class _ScreenAddTableState extends State<ScreenAddTable> {
 
   void _fetchNumberOfTables() async {
     // Buscar o valor do contador no Firestore
-    DocumentSnapshot<Map<String, dynamic>> snapshot =
-        await FirebaseFirestore.instance.collection('table').doc('contador').get();
+    DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+        .instance
+        .collection('table')
+        .doc('contador')
+        .get();
 
     if (snapshot.exists) {
       setState(() {
@@ -31,14 +34,22 @@ class _ScreenAddTableState extends State<ScreenAddTable> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Adicionar/Remover Mesas'),
-        backgroundColor: Colors.blue,
+        title:
+            Text('Configuração Salão', style: TextStyle(color: Colors.white)),
+        backgroundColor: Color(0xFFA2836E),
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Text(
+              'Número de Mesas: $_currentNumberOfTables',
+              style: TextStyle(
+                  fontSize: 22, color: Color.fromARGB(255, 105, 87, 74)),
+            ),
+            SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -47,7 +58,7 @@ class _ScreenAddTableState extends State<ScreenAddTable> {
                     _addTable();
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.green,
+                    primary: const Color.fromARGB(255, 89, 192, 92),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ),
@@ -65,7 +76,7 @@ class _ScreenAddTableState extends State<ScreenAddTable> {
                     _removeTable();
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.red,
+                    primary: const Color.fromARGB(255, 230, 97, 88),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ),
@@ -81,20 +92,12 @@ class _ScreenAddTableState extends State<ScreenAddTable> {
               ],
             ),
             SizedBox(height: 16),
-            Text(
-              'Número de Mesas: $_currentNumberOfTables',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.blue,
-              ),
-            ),
-            SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
                 _confirmTables();
               },
               style: ElevatedButton.styleFrom(
-                primary: Colors.blue,
+                primary: Color(0xFFA2836E),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
@@ -102,7 +105,7 @@ class _ScreenAddTableState extends State<ScreenAddTable> {
               child: Text(
                 'Confirmar',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 18,
                   color: Colors.white,
                 ),
               ),

@@ -14,72 +14,67 @@ class TelaVisualizar extends StatelessWidget {
           'Visualizar Pedidos - $numeroMesa',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.grey[800],
+        backgroundColor: Color(0xFFA2836E),
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
+        padding: EdgeInsets.all(12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              padding: EdgeInsets.all(16.0),
-              margin: EdgeInsets.all(5.0),
-              decoration: BoxDecoration(
-                color: Colors.grey[600],
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Text(
-                'Pedidos:',
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.white,
-                ),
+            Text(
+              'Pedidos:',
+              style: TextStyle(
+                fontSize: 22,
+                color: Colors.black,
               ),
             ),
-            SizedBox(height: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                  stream: getPedidosStream(),
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
-                      return CircularProgressIndicator();
-                    }
+            SizedBox(height: 20), // Ajustei a altura para 20
+            StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+              stream: getPedidosStream(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return CircularProgressIndicator();
+                }
 
-                    var pedidos = snapshot.data!.docs;
+                var pedidos = snapshot.data!.docs;
 
-                    return Column(
-                      children: pedidos.map((pedido) {
-                        var pedidoData = pedido.data() as Map<String, dynamic>;
-                        return Container(
-                          margin: EdgeInsets.symmetric(vertical: 4.0),
-                          padding: EdgeInsets.all(16.0),
-                          decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 194, 194, 194),
-                            borderRadius: BorderRadius.circular(10.0),
+                return Container(
+                  width: double.infinity, // Define a largura como a maior possível
+                  margin: EdgeInsets.symmetric(horizontal: 3.0), // Margem horizontal de 3
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: pedidos.map((pedido) {
+                      var pedidoData = pedido.data() as Map<String, dynamic>;
+                      return Container(
+                        margin: EdgeInsets.symmetric(vertical: 4.0),
+                        padding: EdgeInsets.all(16.0),
+                        decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 240, 218, 204),
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: Text(
+                          "${pedidoData['nome']} - Preço: R\$${pedidoData['preco'].toStringAsFixed(2)} - Observação: ${pedidoData['observacao']}",
+                          style: TextStyle(
+                            fontSize: 16,
                           ),
-                          child: Text(
-                            "${pedidoData['nome']} - Preço: R\$${pedidoData['preco'].toStringAsFixed(2)} - Observação: ${pedidoData['observacao']}",
-                            style: TextStyle(
-                              fontSize: 16,
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    );
-                  },
-                ),
-              ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                );
+              },
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 20), // Ajustei a altura para 20
             Container(
+              width: double.infinity, // Define a largura como a maior possível
+              margin: EdgeInsets.symmetric(horizontal: 3.0), // Margem horizontal de 3
               decoration: BoxDecoration(
-                color: Colors.grey[600],
+                color: Color(0xFFA2836E),
                 borderRadius: BorderRadius.circular(10.0),
               ),
               padding: EdgeInsets.all(16.0),
-              margin: EdgeInsets.all(5.0),
+              //margin: EdgeInsets.symmetric(vertical: 5.0), // Ajustei a margem vertical para 5
               child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                 stream: getPedidosStream(),
                 builder: (context, snapshot) {

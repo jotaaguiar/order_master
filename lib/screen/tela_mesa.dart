@@ -4,7 +4,6 @@ import 'tela_alterar.dart';
 import 'tela_visualizar.dart';
 import 'tela_conta.dart';
 
-
 class TelaMesa extends StatefulWidget {
   final String numeroMesa;
 
@@ -25,7 +24,7 @@ class _TelaMesaState extends State<TelaMesa> {
           '${widget.numeroMesa}',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor:  Color(0xFFA2836E),
+        backgroundColor: Color(0xFFA2836E),
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: Center(
@@ -34,30 +33,36 @@ class _TelaMesaState extends State<TelaMesa> {
           children: [
             OpcaoMesaBotao(
               texto: 'Inserir Pedido',
-              corBotao: Colors.grey[600],
+              corBotao: Color(0xFFA2836E),
               telaDestino: TelaInserir(numeroMesa: widget.numeroMesa),
+              width: 200, // Defina a largura desejada
+              height: 50,  // Defina a altura desejada
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 10),
             OpcaoMesaBotao(
               texto: 'Alterar Pedido',
-              corBotao: Colors.grey[600],
+              corBotao: Color(0xFFA2836E),
               telaDestino: TelaAlterar(numeroMesa: widget.numeroMesa),
+              width: 200, // Defina a largura desejada
+              height: 50,  // Defina a altura desejada
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 10),
             OpcaoMesaBotao(
               texto: 'Visualizar Conta',
-              corBotao: Colors.grey[600],
+              corBotao: Color(0xFFA2836E),
               telaDestino: TelaVisualizar(numeroMesa: widget.numeroMesa),
+              width: 200, // Defina a largura desejada
+              height: 50,  // Defina a altura desejada
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 10),
             OpcaoMesaBotao(
               texto: 'Fechar Conta',
               corBotao: Colors.red,
               telaDestino: TelaConta(numeroMesa: widget.numeroMesa),
+              width: 200, // Defina a largura desejada
+              height: 50,  // Defina a altura desejada
             ),
-            SizedBox(height: 40),
-            
-            
+            SizedBox(height: 10),
           ],
         ),
       ),
@@ -77,12 +82,16 @@ class OpcaoMesaBotao extends StatelessWidget {
   final Color? corBotao;
   final Widget? telaDestino;
   final VoidCallback? onTap;
+  final double? width;
+  final double? height;
 
   OpcaoMesaBotao({
     required this.texto,
     this.corBotao,
     this.telaDestino,
     this.onTap,
+    this.width,
+    this.height,
   });
 
   @override
@@ -104,6 +113,7 @@ class OpcaoMesaBotao extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
+        fixedSize: Size(width ?? double.infinity, height ?? 50),
       ),
       child: Text(
         texto,
