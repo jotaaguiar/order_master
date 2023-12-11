@@ -118,7 +118,7 @@ class _TelaContaState extends State<TelaConta> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Conta', style: TextStyle(color: Colors.white)),
+        title: Text('Conta- ${widget.numeroMesa} ', style: TextStyle(color: Colors.white)),
         backgroundColor: Color(0xFFA2836E),
         iconTheme: IconThemeData(color: Colors.white),
       ),
